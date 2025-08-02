@@ -20,56 +20,8 @@
 .fixed {
   position: fixed;
 }
-.relative {
-  position: relative;
-}
 .static {
   position: static;
-}
-.top-\[141px\] {
-  top: 141px;
-}
-.top-\[210px\] {
-  top: 210px;
-}
-.top-\[883px\] {
-  top: 883px;
-}
-.top-\[893px\] {
-  top: 893px;
-}
-.top-\[936px\] {
-  top: 936px;
-}
-.top-\[937px\] {
-  top: 937px;
-}
-.top-\[987px\] {
-  top: 987px;
-}
-.top-\[988px\] {
-  top: 988px;
-}
-.left-\[95px\] {
-  left: 95px;
-}
-.left-\[108px\] {
-  left: 108px;
-}
-.left-\[113px\] {
-  left: 113px;
-}
-.left-\[153px\] {
-  left: 153px;
-}
-.left-\[179px\] {
-  left: 179px;
-}
-.left-\[211px\] {
-  left: 211px;
-}
-.left-\[341px\] {
-  left: 341px;
 }
 .mx-auto {
   margin-inline: auto;
@@ -88,15 +40,6 @@
 }
 .inline-flex {
   display: inline-flex;
-}
-.h-\[1024px\] {
-  height: 1024px;
-}
-.w-\[1099px\] {
-  width: 1099px;
-}
-.w-\[1440px\] {
-  width: 1440px;
 }
 .w-full {
   width: 100%;
@@ -118,34 +61,6 @@
 }
 .self-center {
   align-self: center;
-}
-.overflow-hidden {
-  overflow: hidden;
-}
-.rounded-\[3px\] {
-  border-radius: 3px;
-}
-.border-t-\[3px\] {
-  border-top-style: var(--tw-border-style);
-  border-top-width: 3px;
-}
-.border-r-\[3px\] {
-  border-right-style: var(--tw-border-style);
-  border-right-width: 3px;
-}
-.border-b {
-  border-bottom-style: var(--tw-border-style);
-  border-bottom-width: 1px;
-}
-.border-b-\[3px\] {
-  border-bottom-style: var(--tw-border-style);
-  border-bottom-width: 3px;
-}
-.text-center {
-  text-align: center;
-}
-.font-\[\'Inter\'\] {
-  font-family: 'Inter';
 }
 .whitespace-nowrap {
   white-space: nowrap;
@@ -171,11 +86,6 @@
       --tw-space-x-reverse: 1;
     }
   }
-}
-@property --tw-border-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
 }
 @property --tw-shadow {
   syntax: "*";
@@ -250,7 +160,6 @@
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
-      --tw-border-style: solid;
       --tw-shadow: 0 0 #0000;
       --tw-shadow-color: initial;
       --tw-shadow-alpha: 100%;
