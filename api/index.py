@@ -1,11 +1,12 @@
-from flask import Flask
+import logging
 
-app = Flask(__name__)
+from flask import Flask, render_template
 
-@app.route('/')
+app: Flask = Flask(__name__)
+log: logging.Logger = logging.getLogger(__name__)
+
+
+@app.route("/")
 def home():
-    return 'Hello, World!'
-
-@app.route('/about')
-def about():
-    return 'About'
+    log.info("rendering platform template")
+    return render_template("home.html")
