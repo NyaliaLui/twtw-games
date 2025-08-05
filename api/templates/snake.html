@@ -6,6 +6,7 @@
     <title>TWTW Games & Animations</title>
     <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/snake.css') }}" rel="stylesheet">
 </head>
 <body class="bg-[#1e2939]">
 <nav class="border-b border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
@@ -70,5 +71,14 @@
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.177.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.177.0/examples/jsm/"
+    }
+}
+</script>
+<script type="module" src="{{ url_for('static', filename='js/snake.js') }}"></script>
 </body>
 </html>
