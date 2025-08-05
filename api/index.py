@@ -8,5 +8,11 @@ log: logging.Logger = logging.getLogger(__name__)
 
 @app.route("/")
 def home():
-    log.info("rendering platform template")
+    log.info("rendering home page")
     return render_template("home.html")
+
+
+@app.route("/snake")
+def snake():
+    log.info("rendering snake challenge")
+    return render_template("snake.html")
