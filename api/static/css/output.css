@@ -20,32 +20,14 @@
 .fixed {
   position: fixed;
 }
-.relative {
-  position: relative;
-}
 .static {
   position: static;
-}
-.sticky {
-  position: sticky;
-}
-.top-full {
-  top: 100%;
-}
-.z-10 {
-  z-index: 10;
 }
 .z-20 {
   z-index: 20;
 }
-.z-50 {
-  z-index: 50;
-}
 .mx-auto {
   margin-inline: auto;
-}
-.ms-auto {
-  margin-inline-start: auto;
 }
 .block {
   display: block;
@@ -62,17 +44,8 @@
 .inline-flex {
   display: inline-flex;
 }
-.h-\[calc\(100\%-1rem\)\] {
-  height: calc(100% - 1rem);
-}
-.max-h-full {
-  max-height: 100%;
-}
 .w-full {
   width: 100%;
-}
-.flex-grow {
-  flex-grow: 1;
 }
 .transform {
   transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
@@ -95,12 +68,6 @@
 .self-center {
   align-self: center;
 }
-.overflow-x-hidden {
-  overflow-x: hidden;
-}
-.overflow-y-auto {
-  overflow-y: auto;
-}
 .border {
   border-style: var(--tw-border-style);
   border-width: 1px;
@@ -115,9 +82,6 @@
 }
 .bg-\[\#1e2939\] {
   background-color: #1e2939;
-}
-.bg-transparent {
-  background-color: transparent;
 }
 .bg-gradient-to-r {
   --tw-gradient-position: to right in oklab;
@@ -142,18 +106,12 @@
 .text-justify {
   text-align: justify;
 }
-.text-left {
-  text-align: left;
-}
 .leading-none {
   --tw-leading: 1;
   line-height: 1;
 }
 .whitespace-nowrap {
   white-space: nowrap;
-}
-.underline {
-  text-decoration-line: underline;
 }
 .hover\:bg-gradient-to-br {
   &:hover {
@@ -163,32 +121,11 @@
     }
   }
 }
-.hover\:bg-gradient-to-l {
-  &:hover {
-    @media (hover: hover) {
-      --tw-gradient-position: to left in oklab;
-      background-image: linear-gradient(var(--tw-gradient-stops));
-    }
-  }
-}
-.hover\:bg-gradient-to-r {
-  &:hover {
-    @media (hover: hover) {
-      --tw-gradient-position: to right in oklab;
-      background-image: linear-gradient(var(--tw-gradient-stops));
-    }
-  }
-}
 .hover\:underline {
   &:hover {
     @media (hover: hover) {
       text-decoration-line: underline;
     }
-  }
-}
-.focus\:z-10 {
-  &:focus {
-    z-index: 10;
   }
 }
 .focus\:ring-2 {
@@ -209,21 +146,11 @@
     outline-style: none;
   }
 }
-.rtl\:rotate-180 {
-  &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
-    rotate: 180deg;
-  }
-}
 .rtl\:space-x-reverse {
   &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
     :where(& > :not(:last-child)) {
       --tw-space-x-reverse: 1;
     }
-  }
-}
-.rtl\:text-right {
-  &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
-    text-align: right;
   }
 }
 @property --tw-rotate-x {
