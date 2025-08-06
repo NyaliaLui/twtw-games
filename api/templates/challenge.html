@@ -6,7 +6,9 @@
     <title>TWTW Games & Animations</title>
     <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
+    {% if challenge == 'snake' %}
     <link href="{{ url_for('static', filename='css/snake.css') }}" rel="stylesheet">
+    {% endif %}
 </head>
 <body class="bg-[#1e2939]">
 <nav class="border-b border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
@@ -24,10 +26,10 @@
     <div class="hidden w-full" id="navbar-hamburger">
       <ul class="flex flex-col font-medium mt-4 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <li>
-          <a href="#" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Snake</a>
+          <a href="/snake" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Snake</a>
         </li>
         <li>
-          <a href="#" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white">Animation Challenge</a>
+          <a href="/animation" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white">Animation Challenge</a>
         </li>
         <li>
           <a href="/" class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">More Info</a>
@@ -79,6 +81,10 @@
     }
 }
 </script>
+{% if challenge == 'snake' %}
 <script type="module" src="{{ url_for('static', filename='js/snake.js') }}"></script>
+{% elif challenge == 'animation' %}
+<script type="module" src="{{ url_for('static', filename='js/animation.js') }}"></script>
+{% endif %}
 </body>
 </html>
