@@ -15,4 +15,10 @@ def home():
 @app.route("/snake")
 def snake():
     log.info("rendering snake challenge")
-    return render_template("snake.html")
+    return render_template("challenge.html", challenge="snake")
+
+
+@app.route("/animation")
+def animation():
+    log.info("rendering animation challenge")
+    return render_template("challenge.html", challenge="animation")
