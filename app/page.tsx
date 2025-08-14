@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="py-4 px-4 mx-auto max-w-screen-xl text-center lg:py-16">
       <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">About this project</h1>
-      <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400 text-justify">In the summer of 2025, Brody Hall interened with Omni Circle Group and Nyalia's Software Solutions. His assignment was to develop game with ThreeJS, and a core requirement was to use AI and prompt engineering. This platform showcases two of his games.</p>
+      <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400 text-justify">In the summer of 2025, Brody Hall interened with Omni Circle Group and Nyalia&apos;s Software Solutions. His assignment was to develop game with ThreeJS, and a core requirement was to use AI and prompt engineering. This platform showcases two of his games.</p>
       <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400 text-justify">The internship was through the Topeka Way to Work program and the City of Topeka. Show support for these efforts by following the City of Topeka on social media.</p>
       <div className="max-w-2xl mx-auto flex flex-col items-center space-y-4">
         <Link href="https://www.facebook.com/cityoftopeka" target="_blank" rel="noopener noreferrer" className="w-full sm:w-64 inline-flex items-center justify-center px-5 py-3 text-base font-medium text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">

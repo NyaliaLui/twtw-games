@@ -118,7 +118,7 @@ export default function Snake() {
     staminaTimerRef.current = setInterval(() => {
       setStaminaBlocks(sb => sb - 1);
     }, staminaDepletionRate);
-  }, [speed, baseSpeed, isBoosting, staminaBlocks, staminaTimerRef]);
+  }, [baseSpeed, staminaTimerRef]);
 
   const stopBoost = useCallback(() => {
     if (!staminaTimerRef.current) return;
@@ -126,7 +126,7 @@ export default function Snake() {
     setIsBoosting(false);
     clearInterval(staminaTimerRef.current);
     staminaTimerRef.current = null;
-  }, [speed, baseSpeed, isBoosting, staminaTimerRef]);
+  }, [baseSpeed, staminaTimerRef]);
 
   const handleKeyDown = useCallback((keys: KeyState) => {
     if (keys.shift && staminaBlocks > 0) {
@@ -143,7 +143,7 @@ export default function Snake() {
   useEffect(() => {
     // initial placement
     resetSnake();
-  }, []);
+  }, [resetSnake]);
 
   // main game loop via useFrame
   function SceneUpdater() {
@@ -180,7 +180,7 @@ export default function Snake() {
       })
 
       // fruit collision
-      let collectedFruitSet = new Set(fruits.filter((fruit) => {
+      const collectedFruitSet = new Set(fruits.filter((fruit) => {
         return headRef.current && fruit.distanceTo(headRef.current.position) < blockSize;
       }));
 
@@ -188,7 +188,7 @@ export default function Snake() {
         setScore(s => s + 5);
         growSnake(3);
         setFruitCollectedCount(fc => fc + 1);
-        let newFruitsSet = new Set(fruits).difference(collectedFruitSet);
+        const newFruitsSet = new Set(fruits).difference(collectedFruitSet);
         setFruits([...newFruitsSet]);
       }
 
@@ -215,13 +215,11 @@ export default function Snake() {
 
         setLevel(l => l + 1);
         setBaseSpeed(bs => bs + 3);
-        setSpeed(_ => {
-          // Add three to the current frame's base speed so we don't have
-          // to wait for the next frame.
-          // TODO(@NyaliaLui): Remove magic numbers
-          const nb = baseSpeed + 3;
-          return isBoosting ? nb * boostMultiplier : nb;
-        });
+        // Add to the current frame's base speed so we don't have
+        // to wait for the next frame.
+        // TODO(@NyaliaLui): Remove magic numbers
+        const nb = baseSpeed + 3;
+        setSpeed(isBoosting ? nb * boostMultiplier : nb);
         setMaxScore(ms => ms + initMaxScore);
         setShowLevelUp(true);
         setTimeout(() => setShowLevelUp(false), 2000);

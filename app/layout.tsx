@@ -2,20 +2,10 @@ import type { Metadata } from "next";
 
 import Image from "next/image";
 import Link from 'next/link';
-import { Geist, Geist_Mono } from "next/font/google";
+import Script from 'next/script';
 import "./globals.css";
 
 import LogoImage from '../public/TWTWLogo.png';
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "TWTW Games & Animations",
@@ -61,7 +51,7 @@ export default function RootLayout({
         <footer className="fixed bottom-0 left-0 z-20 w-full p-4 bg-white border-t border-gray-200 shadow-sm md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
           <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
             <div className="sm:flex sm:items-center sm:justify-between">
-              <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <Link href="https://www.nyaliasoftware.solutions/" className="hover:underline">Nyalia's Software Solutions</Link>. All Rights Reserved.
+              <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <Link href="https://www.nyaliasoftware.solutions/" className="hover:underline">Nyalia&apos;s Software Solutions</Link>. All Rights Reserved.
               </span>
               <div className="flex mt-4 sm:justify-center sm:mt-0">
                 <Link href="https://www.facebook.com/cityoftopeka" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
@@ -87,7 +77,7 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
-        <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+        <Script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></Script>
       </body>
     </html>
   );
