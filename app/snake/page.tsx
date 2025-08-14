@@ -4,6 +4,8 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from "three";
 
+import { KeyState, KeyboardHandler } from "../components/KeyboardHandler";
+
 const boundarySize = 1000;
 const halfBoundary = boundarySize / 2;
 const blockSize = 20;
@@ -13,43 +15,6 @@ const maxStaminaBlocks = 4;
 const staminaDepletionRate = 2500; // ms per block
 const initMaxScore = 50;
 const origin = new THREE.Vector3(0, 0, -200);
-
-interface KeyState {
-  w: boolean;
-  a: boolean;
-  s: boolean;
-  d: boolean;
-  shift: boolean;
-};
-
-type KeyHandlerFn = (keys: KeyState) => void;
-
-function KeyboardHandler({ onKeyDown, onKeyUp, keys }: { onKeyDown: KeyHandlerFn, onKeyUp: KeyHandlerFn, keys: KeyState }) {
-  useEffect(() => {
-    const onDown = (e: KeyboardEvent) => { 
-      keys[e.key.toLowerCase() as keyof KeyState] = true;
-      onKeyDown(keys);
-    };
-
-    const onUp = (e: KeyboardEvent) => {
-      keys[e.key.toLowerCase() as keyof KeyState] = false;
-      onKeyUp(keys);
-    };
-
-    window.addEventListener('keydown', onDown);
-    window.addEventListener('keyup', onUp);
-    return () => {
-      window.removeEventListener('keydown', onDown);
-      window.removeEventListener('keyup', onUp);
-    }
-  }, [onKeyDown, onKeyUp, keys]);
-
-  return (
-    <div className="keyboard-controls bg-black/40 p-2 rounded">
-      WASD to move • Shift to boost
-    </div>
-  );
-}
 
 function Head({ headRef }: { headRef: MutableRefObject<THREE.Mesh | null> }) {
   return (
@@ -145,7 +110,7 @@ export default function Snake() {
     }
     spawnFruits(1);
   }, [growSnake, spawnFruits]);
-
+  
   const startBoost = useCallback(() => {
     if (staminaTimerRef.current) return;
     setSpeed(baseSpeed * boostMultiplier);
@@ -265,7 +230,7 @@ export default function Snake() {
 
     return null;
   }
-
+  
   return (
     <div style={{ height: "100vh", width: "100vw", background: "black" }}>
       {/* HUD */}
@@ -302,7 +267,7 @@ export default function Snake() {
         <OrbitControls enableRotate={false} enablePan={false} enableZoom={false} />
         <SceneUpdater />
       </Canvas>
-      <KeyboardHandler onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} keys={keysRef.current}/>
+      <KeyboardHandler onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} keys={keysRef.current} msg="WASD to move • Shift to boost" />
     </div>
   );
 }

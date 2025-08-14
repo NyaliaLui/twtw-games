@@ -5,38 +5,13 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF, useAnimations, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 
-interface KeyState {
-  w: boolean;
-  a: boolean;
-  s: boolean;
-  d: boolean;
-  shift: boolean;
-}
+import { KeyState, KeyboardHandler } from "../components/KeyboardHandler";
 
-function Soldier() {
+function Soldier({ keys }: { keys: KeyState}) {
   const group = useRef<THREE.Group>(null);
   const { scene, animations } = useGLTF('/models/Soldier.glb') as unknown as { scene: THREE.Group; animations: THREE.AnimationClip[] };
   const { actions, mixer } = useAnimations(animations, scene);
   const [current, setCurrent] = useState<string | null>(null);
-
-  const keys = useRef<KeyState>({ w: false, a: false, s: false, d: false, shift: false });
-
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      const k = e.key.toLowerCase();
-      if (k in keys.current) keys.current[k as keyof KeyState] = true;
-    };
-    const up = (e: KeyboardEvent) => {
-      const k = e.key.toLowerCase();
-      if (k in keys.current) keys.current[k as keyof KeyState] = false;
-    };
-    window.addEventListener('keydown', down);
-    window.addEventListener('keyup', up);
-    return () => {
-      window.removeEventListener('keydown', down);
-      window.removeEventListener('keyup', up);
-    };
-  }, []);
 
   const anims = useRef<Record<string, THREE.AnimationAction>>({});
   useEffect(() => {
@@ -63,21 +38,21 @@ function Soldier() {
     mixer?.update(delta);
 
     const moveDir = new THREE.Vector3();
-    if (keys.current.w) moveDir.z -= 1;
-    if (keys.current.s) moveDir.z += 1;
-    if (keys.current.a) moveDir.x -= 1;
-    if (keys.current.d) moveDir.x += 1;
+    if (keys.w) moveDir.z -= 1;
+    if (keys.s) moveDir.z += 1;
+    if (keys.a) moveDir.x -= 1;
+    if (keys.d) moveDir.x += 1;
 
     const moving = moveDir.lengthSq() > 0;
     if (moving) {
       moveDir.normalize();
-      const speed = baseSpeed * (keys.current.shift ? runMultiplier : 1);
+      const speed = baseSpeed * (keys.shift ? runMultiplier : 1);
       group.current.position.add(moveDir.clone().multiplyScalar(speed));
       const angle = Math.atan2(moveDir.x, moveDir.z);
       group.current.rotation.y = angle + Math.PI;
     }
 
-    const target = moving ? (keys.current.shift && anims.current['run'] ? 'run' : 'walk') : 'idle';
+    const target = moving ? (keys.shift && anims.current['run'] ? 'run' : 'walk') : 'idle';
     if (anims.current[target] && current !== target) {
       if (current && anims.current[current]) anims.current[current].fadeOut(0.2);
       anims.current[target].reset().fadeIn(0.2).play();
@@ -110,6 +85,7 @@ function GroundAndSky() {
 
 export default function Animation() {
   const controlsRef = useRef<React.ElementRef<typeof OrbitControls>>(null);
+  const keysRef = useRef<KeyState>({ w: false, a: false, s: false, d: false, shift: false });
 
   return (
     <div className="w-screen h-screen bg-black">
@@ -118,16 +94,13 @@ export default function Animation() {
         <directionalLight castShadow position={[3, 10, 5]} intensity={0.8} />
 
         <Suspense fallback={null}>
-          <Soldier />
+          <Soldier keys={keysRef.current} />
           <GroundAndSky />
         </Suspense>
 
         <OrbitControls ref={controlsRef} enableRotate={false} target={[0, 1, 0]} />
       </Canvas>
-
-      <div className="keyboard-controls bg-black/40 p-2 rounded">
-        WASD to move • Shift to run
-      </div>
+      <KeyboardHandler onKeyDown={() => {}} onKeyUp={() => {}} keys={keysRef.current} msg="WASD to move • Shift to run" />
     </div>
   );
 }
