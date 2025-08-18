@@ -1,23 +1,55 @@
-import { expect } from "chai";
-
-describe('Snake Navigation', () => {
-  it('should navigate to the snake game', () => {
-    // Start from the index page
+describe('Root Navigation Checks', () => {
+  beforeEach(() => {
     cy.visit('/');
- 
-    // Find a link with an href attribute containing "about" and click it
-    cy.get('a[href*="snake"]').click({force: true});
- 
-    // The new url should include "/snake"
-    cy.url().should('include', '/snake');
- 
-    // The new page should contain score divs
-    cy.get('#max-score').invoke('text').then((text) => {
-      expect(text).to.match(/Max: \d/);
+  });
+
+  it('should render the correct headers and footers', () => {
+    // === NAV ===
+    cy.get('nav').within(() => {
+      // Home link with <span> text
+      cy.get('a[href="/"]').first().within(() => {
+        cy.get('span').contains('Games & Animations');
+      });
+
+      // Hamburger button
+      cy.get('button[data-collapse-toggle="navbar-hamburger"]')
+        .should('exist')
+        .click();
+
+      // Links inside nav
+      cy.get('a[href="/snake"]').contains('Snake');
+      cy.get('a[href="/animation"]').contains('Animation Challenge');
+      cy.get('a[href="/"]').last().contains('More Info'); // second root link
     });
 
-    cy.get('#score').invoke('text').then((text) => {
-      expect(text).to.match(/Score: \d/);
+    // === FOOTER ===
+    cy.get('footer').within(() => {
+      cy.get('a[href="https://www.nyaliasoftware.solutions/"]').should('exist');
+      cy.get('a[href="https://www.facebook.com/cityoftopeka"]').should('exist');
+      cy.get('a[href="https://www.instagram.com/cityoftopeka/"]').should('exist');
+      cy.get('a[href="https://github.com/NyaliaLui/twtw-games"]').should('exist');
     });
+
+    // === SCRIPT ===
+    cy.get('script[src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"]')
+      .should('exist');
+  });
+
+  it('should render the about us content', () => {
+    // Check for <h1>
+    cy.get('h1').should('exist');
+
+    // Check for exactly two <p> elements
+    cy.get('p').should('have.length', 2);
+
+    // Check for the Facebook link
+    cy.get('a[href="https://www.facebook.com/cityoftopeka"]')
+      .should('exist')
+      .and('have.attr', 'target', '_blank');
+
+    // Check for the Instagram link
+    cy.get('a[href="https://www.instagram.com/cityoftopeka/"]')
+      .should('exist')
+      .and('have.attr', 'target', '_blank');
   });
 });
