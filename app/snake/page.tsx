@@ -1,51 +1,28 @@
 "use client";
-import { useRef, useState, useEffect, useCallback, MutableRefObject } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { useRef, useState, useEffect, useCallback } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import * as THREE from "three";
+import * as THREE from 'three';
 
-import { KeyState, KeyboardHandler } from "../components/KeyboardHandler";
-
-const boundarySize = 1000;
-const halfBoundary = boundarySize / 2;
-const blockSize = 20;
-const initSpeed = 5;
-const boostMultiplier = 3;
-const maxStaminaBlocks = 4;
-const staminaDepletionRate = 2500; // ms per block
-const initMaxScore = 50;
-const origin = new THREE.Vector3(0, 0, -200);
-
-function Head({ headRef }: { headRef: MutableRefObject<THREE.Mesh | null> }) {
-  return (
-    <mesh ref={headRef} position={[origin.x, origin.y, origin.z]}>
-      <boxGeometry args={[blockSize, blockSize, blockSize]} />
-      <meshBasicMaterial color={0x00ff00} />
-    </mesh>
-  );
-}
-
-function Fruit({ position }: { position: [number, number, number] }) {
-  return (
-    <mesh position={position}>
-      <boxGeometry args={[blockSize, blockSize, blockSize]} />
-      <meshBasicMaterial color={0xff0000} />
-    </mesh>
-  );
-}
-
-function Boundary() {
-  return (
-    <mesh position={[origin.x, origin.y, origin.z]}>
-      <boxGeometry args={[boundarySize, 0.1, boundarySize]} />
-      <meshBasicMaterial wireframe={true} color={0xffffff} side={THREE.DoubleSide} />
-    </mesh>
-  );
-}
+import { KeyState, KeyboardHandler } from '@/app/components/KeyboardHandler';
+import { makeHeadProps, Head } from '@/app/components/snake/Head';
+import { makeFruitProps, Fruit } from '@/app/components/snake/Fruit';
+import { makeBoundaryProps, Boundary } from '@/app/components/snake/Boundary';
+import { makeBodyProps, BodyPart } from '@/app/components/snake/BodyPart';
+import { boundarySize, halfBoundary, blockSize, gameOrigin, isBoundaryHit, getCollectedFruitSet } from '@/app/utils/snake';
 
 export default function Snake() {
+  const initSpeed = 5;
+  const boostMultiplier = 3;
+  const maxStaminaBlocks = 4;
+  const staminaDepletionRate = 2500; // ms per block
+  const initMaxScore = 50;
+
   // game state
   const [bodyParts, setBodyParts] = useState<THREE.Vector3[]>([]); // array of Vector3
+  // TODO(@NyaliaLui): Re-examine head. According to React Docs, it may not be a suitable
+  // candidate for a ref object because I believe the head (and body) are always changed during the
+  // rendering process. Therefore, useState may be more appropriate. https://react.dev/learn/referencing-values-with-refs#when-to-use-refs
   const headRef = useRef<THREE.Mesh | null>(null);
   const keysRef = useRef<KeyState>({ w: false, a: false, s: false, d: false, shift: false });
 
@@ -72,7 +49,7 @@ export default function Snake() {
   const randPos = useCallback(() => {
     const x = Math.random() * boundarySize - halfBoundary;
     const z = Math.random() * boundarySize - halfBoundary;
-    return new THREE.Vector3(origin.x + x, origin.y, origin.z + z);
+    return new THREE.Vector3(gameOrigin.x + x, gameOrigin.y, gameOrigin.z + z);
   }, []);
 
   const spawnFruits = useCallback((count: number = fruitCount) => {
@@ -160,12 +137,9 @@ export default function Snake() {
       headRef.current.position.add(vel);
 
       // boundary check
-      let hit = false;
-      if (headRef.current.position.x < -halfBoundary) { headRef.current.position.x = -halfBoundary; hit = true; }
-      if (headRef.current.position.x > halfBoundary) { headRef.current.position.x = halfBoundary; hit = true; }
-      if (headRef.current.position.z < -(halfBoundary + -origin.z)) { headRef.current.position.z = -(halfBoundary + -origin.z); hit = true; }
-      if (headRef.current.position.z > (halfBoundary + origin.z)) { headRef.current.position.z = (halfBoundary + origin.z); hit = true; }
-      if (hit) {
+      const boundCheck = isBoundaryHit(headRef.current, halfBoundary, gameOrigin);
+      if (boundCheck.isHit) {
+        headRef.current.position.copy(boundCheck.pos);
         resetSnake();
         return;
       }
@@ -180,9 +154,7 @@ export default function Snake() {
       })
 
       // fruit collision
-      const collectedFruitSet = new Set(fruits.filter((fruit) => {
-        return headRef.current && fruit.distanceTo(headRef.current.position) < blockSize;
-      }));
+      const collectedFruitSet = getCollectedFruitSet(fruits, headRef.current, blockSize);
 
       if (collectedFruitSet.size > 0) {
         setScore(s => s + 5);
@@ -251,16 +223,13 @@ export default function Snake() {
 
       {/* Game Canvas */}
       <Canvas gl={{antialias: true, alpha: true}} camera={{ fov: 75, near: 0.1, far: 2000, position: [0, 1000, 0]}} onCreated={(state) => {state.camera.lookAt(0, 0, 0);}}>
-        <Boundary />
-        <Head headRef={headRef} />
+        <Boundary boundProps={makeBoundaryProps([gameOrigin.x, gameOrigin.y, gameOrigin.z])}/>
+        <Head headProps={makeHeadProps(headRef, [gameOrigin.x, gameOrigin.y, gameOrigin.z])} />
         {bodyParts.map((pos, i) => (
-          <mesh key={i} position={[pos.x, pos.y, pos.z]}>
-            <boxGeometry args={[blockSize, blockSize, blockSize]} />
-            <meshBasicMaterial color={0x00aa00} />
-          </mesh>
+          <BodyPart key={i} bodyProps={makeBodyProps([pos.x, pos.y, pos.z])}/>
         ))}
         {fruits.map((pos, i) => (
-          <Fruit key={i} position={[pos.x, pos.y, pos.z]} />
+          <Fruit key={i} fruitProps={makeFruitProps([pos.x, pos.y, pos.z])} />
         ))}
         <OrbitControls enableRotate={false} enablePan={false} enableZoom={false} />
         <SceneUpdater />
