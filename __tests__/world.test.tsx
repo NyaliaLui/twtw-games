@@ -3,7 +3,7 @@ import { expect } from '@jest/globals';
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import * as THREE from 'three';
 
-import { GroundAndSky, GroundDim } from '@/app/components/animation/GroundAndSky';
+import { World, GroundDim } from '@/app/components/animation/World';
 
 const testTexture = new THREE.Texture();
 testTexture.wrapS = testTexture.wrapT = THREE.RepeatWrapping;
@@ -20,7 +20,7 @@ jest.mock('@react-three/drei', () => {
 
 describe('Test Ground and Sky', () => {
     it('Renders ground and sky', async () => {
-        const renderer = await ReactThreeTestRenderer.create(<GroundAndSky />);
+        const renderer = await ReactThreeTestRenderer.create(<World />);
         const mesh = renderer.scene.children[0];
         expect(mesh.type).toBe('Mesh');
         expect(mesh.props['rotation-x']).toEqual(-Math.PI / 2);

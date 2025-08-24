@@ -3,11 +3,11 @@ import { useThree } from '@react-three/fiber';
 import { useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 
-export { GroundAndSky, GroundDim };
+export { World, GroundDim };
 
 const GroundDim = 100;
 
-function GroundAndSky() {
+function World() {
   const grass = useTexture('/textures/grass.jpg');
   grass.wrapS = grass.wrapT = THREE.RepeatWrapping;
   grass.repeat.set(10, 10);

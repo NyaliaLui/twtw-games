@@ -6,7 +6,7 @@ import { OrbitControls } from '@react-three/drei';
 
 import { KeyState, KeyboardHandler } from '@/app/components/KeyboardHandler';
 import { Soldier } from '@/app/components/animation/Soldier';
-import { GroundAndSky } from '@/app/components/animation/GroundAndSky';
+import { World } from '@/app/components/animation/World';
 
 export default function Animation() {
   const keysRef = useRef<KeyState>({ w: false, a: false, s: false, d: false, shift: false });
@@ -18,7 +18,7 @@ export default function Animation() {
         <directionalLight castShadow position={[3, 10, 5]} intensity={0.8} />
 
         <Soldier keys={keysRef.current} gltfPath='/models/Soldier.glb' />
-        <GroundAndSky />
+        <World />
 
         <OrbitControls enableRotate={false} target={[0, 1, 0]} />
       </Canvas>
