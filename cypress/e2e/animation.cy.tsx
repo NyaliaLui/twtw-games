@@ -1,4 +1,4 @@
-import { makeAriaQuery } from "./testutils";
+import { makeAriaQuery } from "./e2eutils";
 
 describe('Animation Page', () => {
   beforeEach(() => {

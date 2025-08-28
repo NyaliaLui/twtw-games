@@ -5,7 +5,7 @@ import ReactThreeTestRenderer from '@react-three/test-renderer';
 import React from 'react';
 import * as THREE from 'three';
 
-import { ChildrenType, TestProps, checkBoxMesh, makeSnakeHeadProps } from '@/testutils/snake';
+import { ChildrenType, TestProps, checkBoxMesh, makeSnakeHeadProps } from './utils/snake';
 import { Head } from '@/app/components/snake/Head';
 import { FruitProps, makeFruitProps, Fruit } from '@/app/components/snake/Fruit';
 import { blockSize, gameOrigin, getCollectedFruitSet } from '@/app/utils/snake';

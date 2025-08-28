@@ -1,6 +1,6 @@
 import { expect } from "chai";
 
-import { makeAriaQuery } from "./testutils";
+import { makeAriaQuery } from "./e2eutils";
 
 describe('Snake Page', () => {
   beforeEach(() => {

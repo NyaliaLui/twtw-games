@@ -4,7 +4,7 @@ import ReactThreeTestRenderer from '@react-three/test-renderer';
 
 import React from 'react';
 
-import { ChildrenType, TestProps, checkBoxMesh, makeSnakeHeadProps } from '@/testutils/snake';
+import { ChildrenType, TestProps, checkBoxMesh, makeSnakeHeadProps } from './utils/snake';
 import { HeadProps, Head } from '@/app/components/snake/Head';
 
 describe('Test Snake head', () => {
