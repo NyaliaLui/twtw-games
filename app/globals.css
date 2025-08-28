@@ -29,7 +29,7 @@
 #score-board {
   position: absolute;
   width: 100%;
-  top: 10vh;
+  top: 8vh;
   left: 0;
   display: flex;
   justify-content: space-between;

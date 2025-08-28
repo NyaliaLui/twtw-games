@@ -12,7 +12,7 @@ export {
 const boundarySize = 1000;
 const halfBoundary = boundarySize / 2;
 const blockSize = 20;
-const gameOrigin = new THREE.Vector3(0, 0, -200);
+const gameOrigin = new THREE.Vector3(0, 0, 0);
 
 function isBoundaryHit(head: THREE.Mesh | null, boundaryDim: number = halfBoundary, origin: THREE.Vector3 = gameOrigin) {
   const ret = {
