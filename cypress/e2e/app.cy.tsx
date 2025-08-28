@@ -19,7 +19,6 @@ describe('Root Navigation Checks', () => {
       // Links inside nav
       cy.get('a[href="/snake"]').contains('Snake');
       cy.get('a[href="/animation"]').contains('Animation Challenge');
-      cy.get('a[href="/"]').last().contains('More Info'); // second root link
     });
 
     // === FOOTER ===

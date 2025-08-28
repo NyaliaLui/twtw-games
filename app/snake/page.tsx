@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import Link from 'next/link';
 import * as THREE from 'three';
 
 import { KeyState, Controls } from '@/app/components/Controls';
@@ -200,7 +201,17 @@ export default function Snake() {
   }
   
   return (
-    <div style={{ height: "100vh", width: "100vw", background: "black" }}>
+    <div className="fixed inset-0 bg-black z-40">
+      <Link 
+        href="/" 
+        className="fixed top-4 left-4 z-50 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
+        aria-label="Exit to Main Menu"
+      >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        <span className="text-sm">Exit</span>
+      </Link>
       {/* HUD */}
       <div id="score-board">
         <div id="max-score">
