@@ -1,10 +1,10 @@
-// app/page.tsx
+// app/animation/page.tsx
 'use client';
 import { useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 
-import { KeyState, KeyboardHandler } from '@/app/components/KeyboardHandler';
+import { KeyState, Controls } from '@/app/components/Controls';
 import { Soldier } from '@/app/components/animation/Soldier';
 import { World } from '@/app/components/animation/World';
 
@@ -22,7 +22,9 @@ export default function Animation() {
 
         <OrbitControls enableRotate={false} target={[0, 1, 0]} />
       </Canvas>
-      <KeyboardHandler onKeyDown={() => {}} onKeyUp={() => {}} keys={keysRef.current} msg="WASD to move • Shift to run" />
+      
+      {/* Controls */}
+      <Controls keys={keysRef.current} shiftLabel='RUN' onKeyDown={() => {}} onKeyUp={() => {}} />
     </div>
   );
 }

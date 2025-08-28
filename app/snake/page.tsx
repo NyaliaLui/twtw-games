@@ -4,7 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-import { KeyState, KeyboardHandler } from '@/app/components/KeyboardHandler';
+import { KeyState, Controls } from '@/app/components/Controls';
 import { makeHeadProps, Head } from '@/app/components/snake/Head';
 import { makeFruitProps, Fruit } from '@/app/components/snake/Fruit';
 import { makeBoundaryProps, Boundary } from '@/app/components/snake/Boundary';
@@ -42,8 +42,6 @@ export default function Snake() {
   const staminaTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const [fruitCollectedCount, setFruitCollectedCount] = useState(0);
-
-  // camera setup handled by PerspectiveCamera + OrbitControls
 
   // Helpers
   const randPos = useCallback(() => {
@@ -234,7 +232,9 @@ export default function Snake() {
         <OrbitControls enableRotate={false} enablePan={false} enableZoom={false} />
         <SceneUpdater />
       </Canvas>
-      <KeyboardHandler onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} keys={keysRef.current} msg="WASD to move • Shift to boost" />
+      
+      {/* Controls */}
+      <Controls keys={keysRef.current} shiftLabel='BOOST' onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} />
     </div>
   );
 }

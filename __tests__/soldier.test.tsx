@@ -4,7 +4,7 @@ import { useAnimations } from '@react-three/drei';
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 import * as THREE from 'three';
 
-import { KeyState } from '@/app/components/KeyboardHandler';
+import { KeyState } from '@/app/components/Controls';
 import { Soldier } from '@/app/components/animation/Soldier';
 
 const testScene = new THREE.Group();

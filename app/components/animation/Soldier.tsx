@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import * as THREE from 'three';
 
-import { KeyState } from "@/app/components/KeyboardHandler";
+import { KeyState } from "@/app/components/Controls";
 
 export { Soldier };
 
