@@ -15,7 +15,21 @@ export default function ConditionalLayout({ children }: { children: React.ReactN
   const shouldHideLayout = hideLayoutPages.includes(pathname);
 
   if (shouldHideLayout) {
-    return <>{children}</>;
+    return (
+      <>
+        <Link 
+          href="/" 
+          className="fixed top-2 lg:top-4 left-4 z-50 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
+          aria-label="Exit to Main Menu"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          <span className="text-xs sm:text-sm">Exit</span>
+        </Link>
+        {children}
+      </>
+    );
   }
 
   return (
@@ -24,7 +38,7 @@ export default function ConditionalLayout({ children }: { children: React.ReactN
       <nav className="sticky top-0 z-50 border-b border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-            <Image src={LogoImage} className="h-8 logo" alt="TWTW Logo" />
+            <Image src={LogoImage} className="h-8 w-25 sm:w-30" alt="TWTW Logo" />
             <span className="self-center text-lg md:text-2xl font-semibold whitespace-nowrap dark:text-white">Games & Animations</span>
           </Link>
           <button 

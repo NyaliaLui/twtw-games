@@ -1,4 +1,4 @@
-import { blockSize } from '@/app/utils/snake';
+import { blockSize } from '@/app/utils';
 
 import { MutableRefObject } from "react";
 import * as THREE from "three";

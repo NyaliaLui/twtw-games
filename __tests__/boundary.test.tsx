@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { ChildrenType, TestProps, checkBoxMesh, makeSnakeHeadProps } from './utils/snake';
 import { Head } from '@/app/components/snake/Head';
 import { BoundaryProps, makeBoundaryProps, Boundary } from '@/app/components/snake/Boundary';
-import { gameOrigin, halfBoundary, isBoundaryHit } from '@/app/utils/snake';
+import { gameOrigin, halfBoundary, isBoundaryHit } from '@/app/utils';
 
 describe('Test Snake boundaries', () => {
     it('Renders game boundaries', async () => {

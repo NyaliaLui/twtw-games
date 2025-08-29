@@ -2,7 +2,6 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import Link from 'next/link';
 import * as THREE from 'three';
 
 import { KeyState, Controls } from '@/app/components/Controls';
@@ -10,7 +9,29 @@ import { makeHeadProps, Head } from '@/app/components/snake/Head';
 import { makeFruitProps, Fruit } from '@/app/components/snake/Fruit';
 import { makeBoundaryProps, Boundary } from '@/app/components/snake/Boundary';
 import { makeBodyProps, BodyPart } from '@/app/components/snake/BodyPart';
-import { boundarySize, halfBoundary, blockSize, gameOrigin, isBoundaryHit, getCollectedFruitSet } from '@/app/utils/snake';
+import { boundarySize, blockSize, gameOrigin, isBoundaryHit, getCollectedFruitSet, breakpointSM, isWindowDefined } from '@/app/utils';
+
+function getConditionalSizes(): { gameBoundarySize: number; gameHalfBoundarySize: number; cubeDim: number; } {
+  const ret = {
+    gameBoundarySize: 0,
+    gameHalfBoundarySize: 0,
+    cubeDim: 0
+  };
+
+  // On screens larger than small breakpoint use larger sizes
+  // otherwise use smaller sizes.
+  if (isWindowDefined() && breakpointSM(window.innerWidth)) {
+    ret.gameBoundarySize = boundarySize;
+    ret.cubeDim = blockSize;
+  } else {
+    ret.gameBoundarySize = boundarySize / 2;
+    ret.cubeDim = blockSize * 0.75;
+  }
+
+  ret.gameHalfBoundarySize = ret.gameBoundarySize / 2;
+
+  return ret;
+}
 
 export default function Snake() {
   const initSpeed = 5;
@@ -18,6 +39,8 @@ export default function Snake() {
   const maxStaminaBlocks = 4;
   const staminaDepletionRate = 2500; // ms per block
   const initMaxScore = 50;
+
+  const { gameBoundarySize, gameHalfBoundarySize, cubeDim } = getConditionalSizes();
 
   // game state
   const [bodyParts, setBodyParts] = useState<THREE.Vector3[]>([]); // array of Vector3
@@ -46,10 +69,10 @@ export default function Snake() {
 
   // Helpers
   const randPos = useCallback(() => {
-    const x = Math.random() * boundarySize - halfBoundary;
-    const z = Math.random() * boundarySize - halfBoundary;
+    const x = Math.random() * gameBoundarySize - gameHalfBoundarySize;
+    const z = Math.random() * gameBoundarySize - gameHalfBoundarySize;
     return new THREE.Vector3(gameOrigin.x + x, gameOrigin.y, gameOrigin.z + z);
-  }, []);
+  }, [gameBoundarySize, gameHalfBoundarySize]);
 
   const spawnFruits = useCallback((count: number = fruitCount) => {
     // TOOD(@NyaliaLui): What happens if the snake collects two or more fruits in the same frame?
@@ -136,7 +159,7 @@ export default function Snake() {
       headRef.current.position.add(vel);
 
       // boundary check
-      const boundCheck = isBoundaryHit(headRef.current, halfBoundary, gameOrigin);
+      const boundCheck = isBoundaryHit(headRef.current, gameHalfBoundarySize, gameOrigin);
       if (boundCheck.isHit) {
         headRef.current.position.copy(boundCheck.pos);
         resetSnake();
@@ -153,7 +176,7 @@ export default function Snake() {
       })
 
       // fruit collision
-      const collectedFruitSet = getCollectedFruitSet(fruits, headRef.current, blockSize);
+      const collectedFruitSet = getCollectedFruitSet(fruits, headRef.current, cubeDim);
 
       if (collectedFruitSet.size > 0) {
         setScore(s => s + 5);
@@ -202,18 +225,8 @@ export default function Snake() {
   
   return (
     <div className="fixed inset-0 bg-black z-40">
-      <Link 
-        href="/" 
-        className="fixed top-2 lg:top-4 left-4 z-50 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
-        aria-label="Exit to Main Menu"
-      >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-        <span className="text-sm">Exit</span>
-      </Link>
       {/* HUD */}
-      <div id="score-board">
+      <div id="score-board" className="absolute w-full top-[8vh] left-0 flex justify-between pl-5 pr-5 text-white font-mono text-lg sm:text-2xl">
         <div id="max-score">
           Max: {maxScore}
         </div>
@@ -221,24 +234,24 @@ export default function Snake() {
           Score: {score}
         </div>
       </div>
-      <div id="level-up" style={{ opacity: showLevelUp ? 1 : 0 }}>
+      <div id="level-up" className="absolute top-1/2 left-1/2 text-white font-mono text-2xl sm:text-5xl" style={{ opacity: showLevelUp ? 1 : 0, transform: 'translate(-50%, -80%)' }}>
         Level: {level}
       </div>
-      <div id="stamina">
+      <div id="stamina" className="absolute left-2.5 top-[40vh] sm:top-[35vh] w-6 sm:w-8 h-24 gap-1 flex flex-col-reverse border-2 border-solid border-white rounded-md">
         {new Array(staminaBlocks).fill(0).map((_, i) => (
-          <div key={i} className="stamina-block"></div>
+          <div key={i} className="w-full h-5 bg-lime-400"></div>
         ))}
       </div>
 
       {/* Game Canvas */}
       <Canvas gl={{antialias: true, alpha: true}} camera={{ fov: 75, near: 0.1, far: 2000, position: [0, 1000, 0]}} onCreated={(state) => {state.camera.lookAt(0, 0, 0);}}>
-        <Boundary boundProps={makeBoundaryProps([gameOrigin.x, gameOrigin.y, gameOrigin.z])}/>
-        <Head headProps={makeHeadProps(headRef, [gameOrigin.x, gameOrigin.y, gameOrigin.z])} />
+        <Boundary boundProps={makeBoundaryProps([gameOrigin.x, gameOrigin.y, gameOrigin.z], [gameBoundarySize, 0.1, gameBoundarySize])}/>
+        <Head headProps={makeHeadProps(headRef, [gameOrigin.x, gameOrigin.y, gameOrigin.z], cubeDim)} />
         {bodyParts.map((pos, i) => (
-          <BodyPart key={i} bodyProps={makeBodyProps([pos.x, pos.y, pos.z])}/>
+          <BodyPart key={i} bodyProps={makeBodyProps([pos.x, pos.y, pos.z], cubeDim)}/>
         ))}
         {fruits.map((pos, i) => (
-          <Fruit key={i} fruitProps={makeFruitProps([pos.x, pos.y, pos.z])} />
+          <Fruit key={i} fruitProps={makeFruitProps([pos.x, pos.y, pos.z], cubeDim)} />
         ))}
         <OrbitControls enableRotate={false} enablePan={false} enableZoom={false} />
         <SceneUpdater />

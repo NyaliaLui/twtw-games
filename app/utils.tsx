@@ -6,7 +6,9 @@ export {
   blockSize,
   gameOrigin,
   isBoundaryHit,
-  getCollectedFruitSet
+  getCollectedFruitSet,
+  breakpointSM,
+  isWindowDefined
 };
 
 const boundarySize = 1000;
@@ -40,4 +42,16 @@ function getCollectedFruitSet(fruits: THREE.Vector3[], head: THREE.Mesh | null, 
   return new Set<THREE.Vector3>(fruits.filter((fruit) => {
     return fruit.distanceTo(head.position) < fruitSize;
   }));
+}
+
+// Use the same breakpoint philosophy as TailwindCSS which is based on the
+// Root Element (<html>) size. https://tailwindcss.com/docs/responsive-design
+function breakpointSM(width: number): boolean {
+  const rootElementSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  return width >= (40 * rootElementSize);
+}
+
+// TODO(@NyaliaLui): Checking for undefined window seems like a hack, consider making a custom hook for window size.
+function isWindowDefined(): boolean {
+  return typeof window !== 'undefined';
 }
