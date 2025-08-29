@@ -70,11 +70,7 @@ function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps ) {
   const shiftActiveButtonClass = "w-15 h-15 bg-red-500 border-2 border-red-400 rounded-lg flex flex-col items-center justify-center text-white font-bold text-sm select-none shadow-lg";
 
   const toggleDPadClass = (k: boolean) => {
-    if (k) {
-      return dpadActiveButtonClass
-    }
-    
-    return dpadButtonClass
+    return k ? dpadActiveButtonClass : dpadButtonClass;
   };
 
   return (
