@@ -226,7 +226,7 @@ export default function Snake() {
   return (
     <div className="fixed inset-0 bg-black z-40">
       {/* HUD */}
-      <div id="score-board" className="absolute w-full top-[8vh] left-0 flex justify-between pl-5 pr-5 text-white font-mono text-lg sm:text-2xl">
+      <div id="score-board" className="absolute top-2 lg:top-4 right-4 text-white font-mono text-lg sm:text-2xl">
         <div id="max-score">
           Max: {maxScore}
         </div>
@@ -237,7 +237,7 @@ export default function Snake() {
       <div id="level-up" className="absolute top-1/2 left-1/2 text-white font-mono text-2xl sm:text-5xl" style={{ opacity: showLevelUp ? 1 : 0, transform: 'translate(-50%, -80%)' }}>
         Level: {level}
       </div>
-      <div id="stamina" className="absolute left-2.5 top-[40vh] sm:top-[35vh] w-6 sm:w-8 h-24 gap-1 flex flex-col-reverse border-2 border-solid border-white rounded-md">
+      <div id="stamina" className="absolute left-2.5 top-[40vh] sm:top-[32vh] w-6 sm:w-8 h-24 gap-1 flex flex-col-reverse border-2 border-solid border-white rounded-md">
         {new Array(staminaBlocks).fill(0).map((_, i) => (
           <div key={i} className="w-full h-5 bg-lime-400"></div>
         ))}
