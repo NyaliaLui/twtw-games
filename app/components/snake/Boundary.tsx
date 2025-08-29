@@ -1,4 +1,5 @@
-import { boundarySize } from '@/app/utils/snake';
+'use client';
+import { boundarySize } from '@/app/utils';
 
 import * as THREE from 'three';
 

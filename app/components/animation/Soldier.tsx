@@ -1,10 +1,11 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import * as THREE from 'three';
 
-import { KeyState } from "@/app/components/KeyboardHandler";
+import { KeyState } from "@/app/components/Controls";
+import { breakpointSM } from '@/app/utils';
 
 export { Soldier };
 
@@ -15,6 +16,13 @@ function Soldier({ keys, gltfPath }: { keys: KeyState, gltfPath: string }) {
   const [current, setCurrent] = useState<string | null>(null);
 
   const anims = useRef<Record<string, THREE.AnimationAction>>({});
+
+  const { size } = useThree();
+
+  // On screens larger than small breakpoint use scale 1
+  // otherwise use scale 0.5.
+  scene.scale.setScalar(breakpointSM(size.width) ? 1 : 0.5);
+  
   useEffect(() => {
     if (!actions) return;
     Object.keys(actions).forEach((name) => {

@@ -1,4 +1,4 @@
-import { blockSize } from '@/app/utils/snake';
+import { blockSize } from '@/app/utils';
 
 export type { BodyProps };
 export { makeBodyProps, BodyPart };

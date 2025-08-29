@@ -1,5 +1,7 @@
 import { expect } from "chai";
 
+import { makeAriaQuery } from "./e2eutils";
+
 describe('Snake Page', () => {
   beforeEach(() => {
     cy.visit('/snake');
@@ -20,7 +22,11 @@ describe('Snake Page', () => {
         expect(text).to.match(/Level: \d/);
     });
     cy.get('div#stamina').should('exist');
-    cy.get('div.keyboard-controls').contains('WASD to move • Shift to boost');
+    cy.get(makeAriaQuery('Move Up (W)')).should('exist');
+    cy.get(makeAriaQuery('Move Left (A)')).should('exist');
+    cy.get(makeAriaQuery('Move Down (S)')).should('exist');
+    cy.get(makeAriaQuery('Move Right (D)')).should('exist');
+    cy.get(makeAriaQuery('BOOST')).should('exist');
     cy.get('canvas').should('exist');
   });
 });

@@ -15,6 +15,7 @@ const config: Config = {
   globals: {
     IS_REACT_ACT_ENVIRONMENT: true,
   },
+  testPathIgnorePatterns: ["<rootDir>/__tests__/utils/"]
 };
  
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
