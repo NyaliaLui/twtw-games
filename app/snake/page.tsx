@@ -4,7 +4,7 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Mesh, Vector3 } from 'three';
 
-import { KeyState, Controls } from '@/app/components/Controls';
+import { KeyState, Controls, initKeyState } from '@/app/components/Controls';
 import { makeHeadProps, Head } from '@/app/components/snake/Head';
 import { makeFruitProps, Fruit } from '@/app/components/snake/Fruit';
 import { makeBoundaryProps, Boundary } from '@/app/components/snake/Boundary';
@@ -26,7 +26,7 @@ function getConditionalSizes(): { gameBoundarySize: number; gameHalfBoundarySize
     ret.cubeDim = snakeConfig.blockSize;
   } else {
     ret.gameBoundarySize = snakeConfig.boundarySize / 2;
-    ret.cubeDim = snakeConfig.blockSize * 0.75;
+    ret.cubeDim = snakeConfig.blockSize * snakeConfig.cubeDimSmallMultiplier;
   }
 
   ret.gameHalfBoundarySize = ret.gameBoundarySize / 2;
@@ -38,29 +38,29 @@ export default function Snake() {
   const { gameBoundarySize, gameHalfBoundarySize, cubeDim } = getConditionalSizes();
 
   // game state
-  const [bodyParts, setBodyParts] = useState<Vector3[]>([]); // array of Vector3
+  const [bodyParts, setBodyParts] = useState<Vector3[]>(snakeConfig.initBodyParts); // array of Vector3
   // TODO(@NyaliaLui): Re-examine head. According to React Docs, it may not be a suitable
   // candidate for a ref object because I believe the head (and body) are always changed during the
   // rendering process. Therefore, useState may be more appropriate. https://react.dev/learn/referencing-values-with-refs#when-to-use-refs
-  const headRef = useRef<Mesh | null>(null);
-  const keysRef = useRef<KeyState>({ w: false, a: false, s: false, d: false, shift: false });
+  const headRef = useRef<Mesh | null>(snakeConfig.initHead);
+  const keysRef = useRef<KeyState>(initKeyState());
 
-  const [fruits, setFruits] = useState<Vector3[]>([]); // array of Vector3
-  const [fruitCount, setFruitCount] = useState(1);
+  const [fruits, setFruits] = useState<Vector3[]>(snakeConfig.initFruits);
+  const [fruitCount, setFruitCount] = useState(snakeConfig.initFruitCount);
 
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(snakeConfig.initScore);
   const [maxScore, setMaxScore] = useState(snakeConfig.initMaxScore);
-  const [level, setLevel] = useState(1);
-  const [showLevelUp, setShowLevelUp] = useState(false);
+  const [level, setLevel] = useState(snakeConfig.initLevel);
+  const [showLevelUp, setShowLevelUp] = useState(snakeConfig.initShowLevelUp);
 
   const [baseSpeed, setBaseSpeed] = useState(snakeConfig.initSpeed);
   const [speed, setSpeed] = useState(snakeConfig.initSpeed);
-  const [isBoosting, setIsBoosting] = useState(false);
+  const [isBoosting, setIsBoosting] = useState(snakeConfig.initIsBoosting);
 
-  const [staminaBlocks, setStaminaBlocks] = useState(0);
-  const staminaTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [staminaBlocks, setStaminaBlocks] = useState(snakeConfig.initStaminaBlocks);
+  const staminaTimerRef = useRef<NodeJS.Timeout | null>(snakeConfig.initStaminaTimer);
 
-  const [fruitCollectedCount, setFruitCollectedCount] = useState(0);
+  const [fruitCollectedCount, setFruitCollectedCount] = useState(snakeConfig.initFruitCollectedCount);
 
   // Helpers
   const randPos = useCallback(() => {
@@ -78,7 +78,7 @@ export default function Snake() {
     setFruits(arr);
   }, [randPos, fruitCount]);
 
-  const growSnake = useCallback((parts: number = 3) => {
+  const growSnake = useCallback((parts: number = snakeConfig.numPartsToGrow) => {
     setBodyParts(prev => {
       const headPos = headRef.current ? headRef.current.position.clone() : new Vector3();
       const newParts = new Array(parts).fill(0).map(() => headPos.clone());
@@ -87,20 +87,20 @@ export default function Snake() {
   }, []);
 
   const resetSnake = useCallback(() => {
-    setBodyParts([]);
+    setBodyParts(snakeConfig.initBodyParts);
     growSnake();
-    setScore(0);
+    setScore(snakeConfig.initScore);
     setBaseSpeed(snakeConfig.initSpeed);
     setSpeed(snakeConfig.initSpeed);
-    setFruitCount(1);
-    setLevel(1);
+    setFruitCount(snakeConfig.initFruitCount);
+    setLevel(snakeConfig.initLevel);
     setMaxScore(snakeConfig.initMaxScore);
-    setStaminaBlocks(0);
-    setFruitCollectedCount(0);
-    setIsBoosting(false);
+    setStaminaBlocks(snakeConfig.initStaminaBlocks);
+    setFruitCollectedCount(snakeConfig.initFruitCollectedCount);
+    setIsBoosting(snakeConfig.initIsBoosting);
     if (staminaTimerRef.current) {
       clearInterval(staminaTimerRef.current);
-      staminaTimerRef.current = null;
+      staminaTimerRef.current = snakeConfig.initStaminaTimer;
     }
     spawnFruits(1);
   }, [growSnake, spawnFruits]);
@@ -110,7 +110,7 @@ export default function Snake() {
     setSpeed(baseSpeed * snakeConfig.boostMultiplier);
     setIsBoosting(true);
     staminaTimerRef.current = setInterval(() => {
-      setStaminaBlocks(sb => sb - 1);
+      setStaminaBlocks(sb => sb - snakeConfig.decrementStaminaBlock);
     }, snakeConfig.staminaDepletionRate);
   }, [baseSpeed, staminaTimerRef]);
 
@@ -175,7 +175,7 @@ export default function Snake() {
 
       if (collectedFruitSet.size > 0) {
         setScore(s => s + snakeConfig.incrementScore);
-        growSnake(3);
+        growSnake();
         setFruitCollectedCount(fc => fc + snakeConfig.incrementFruitCollected);
         const newFruitsSet = new Set(fruits).difference(collectedFruitSet);
         setFruits([...newFruitsSet]);
@@ -183,7 +183,7 @@ export default function Snake() {
 
       if (fruitCollectedCount >= snakeConfig.fruitPerStaminaBlock && staminaBlocks < snakeConfig.maxStaminaBlocks) {
         setStaminaBlocks(sb => sb + snakeConfig.incrementStaminaBlock);
-        setFruitCollectedCount(0);
+        setFruitCollectedCount(snakeConfig.initFruitCollectedCount);
       }
 
       if (fruits.length === 0) {
@@ -238,7 +238,7 @@ export default function Snake() {
       </div>
 
       {/* Game Canvas */}
-      <Canvas gl={{antialias: true, alpha: true}} camera={{ fov: 75, near: 0.1, far: 2000, position: [0, 1000, 0]}} onCreated={(state) => {state.camera.lookAt(0, 0, 0);}}>
+      <Canvas gl={{antialias: snakeConfig.renderer.antialias, alpha: snakeConfig.renderer.alpha}} camera={{ fov: snakeConfig.camera.fov, near: snakeConfig.camera.near, far: snakeConfig.camera.far, position: snakeConfig.camera.position}} onCreated={snakeConfig.onCreated}>
         <Boundary boundProps={makeBoundaryProps([snakeConfig.origin.x, snakeConfig.origin.y, snakeConfig.origin.z], [gameBoundarySize, 0.1, gameBoundarySize])}/>
         <Head headProps={makeHeadProps(headRef, [snakeConfig.origin.x, snakeConfig.origin.y, snakeConfig.origin.z], cubeDim)} />
         {bodyParts.map((pos, i) => (
@@ -247,7 +247,7 @@ export default function Snake() {
         {fruits.map((pos, i) => (
           <Fruit key={i} fruitProps={makeFruitProps([pos.x, pos.y, pos.z], cubeDim)} />
         ))}
-        <OrbitControls enableRotate={false} enablePan={false} enableZoom={false} />
+        <OrbitControls enableRotate={snakeConfig.orbitControls.enableRotate} enablePan={snakeConfig.orbitControls.enablePan} enableZoom={snakeConfig.orbitControls.enableZoom} />
         <SceneUpdater />
       </Canvas>
       

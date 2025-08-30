@@ -2,7 +2,7 @@
 import { useEffect, useCallback } from "react";
 
 export type { KeyState, KeyHandlerFn };
-export { Controls };
+export { Controls, initKeyState };
 
 interface KeyState {
   w: boolean;
@@ -20,6 +20,10 @@ interface ControlsProps {
   onKeyDown: KeyHandlerFn;
   onKeyUp: KeyHandlerFn;
 };
+
+function initKeyState(): KeyState {
+  return { w: false, a: false, s: false, d: false, shift: false };
+}
 
 function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps ) {
   const setKey = useCallback((key: keyof KeyState) => {
