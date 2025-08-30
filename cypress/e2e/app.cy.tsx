@@ -7,9 +7,11 @@ describe('Root Navigation Checks', () => {
     // === NAV ===
     cy.get('nav').within(() => {
       // Home link with <span> text
-      cy.get('a[href="/"]').first().within(() => {
-        cy.get('span').contains('Games & Animations');
-      });
+      cy.get('a[href="/"]')
+        .first()
+        .within(() => {
+          cy.get('span').contains('Games & Animations');
+        });
 
       // Hamburger button
       cy.get('button[data-collapse-toggle="navbar-hamburger"]')
@@ -25,21 +27,26 @@ describe('Root Navigation Checks', () => {
     cy.get('footer').within(() => {
       cy.get('a[href="https://www.nyaliasoftware.solutions/"]').should('exist');
       cy.get('a[href="https://www.facebook.com/cityoftopeka"]').should('exist');
-      cy.get('a[href="https://www.instagram.com/cityoftopeka/"]').should('exist');
-      cy.get('a[href="https://github.com/NyaliaLui/twtw-games"]').should('exist');
+      cy.get('a[href="https://www.instagram.com/cityoftopeka/"]').should(
+        'exist',
+      );
+      cy.get('a[href="https://github.com/NyaliaLui/twtw-games"]').should(
+        'exist',
+      );
     });
 
     // === SCRIPT ===
-    cy.get('script[src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"]')
-      .should('exist');
+    cy.get(
+      'script[src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"]',
+    ).should('exist');
   });
 
   it('should render the about us content', () => {
     // Check for <h1>
     cy.get('h1').should('exist');
 
-    // Check for exactly two <p> elements
-    cy.get('p').should('have.length', 2);
+    // Check for exactly three <p> elements
+    cy.get('p').should('have.length', 3);
 
     // Check for the Facebook link
     cy.get('a[href="https://www.facebook.com/cityoftopeka"]')
@@ -50,5 +57,8 @@ describe('Root Navigation Checks', () => {
     cy.get('a[href="https://www.instagram.com/cityoftopeka/"]')
       .should('exist')
       .and('have.attr', 'target', '_blank');
+
+    // Check for one HR
+    cy.get('hr').should('have.length', 1);
   });
 });

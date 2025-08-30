@@ -21,7 +21,7 @@ describe('Controls Component', () => {
     mockOnKeyDown = jest.fn();
     mockOnKeyUp = jest.fn();
     mockKeys = createMockKeyState();
-    
+
     // Clear all mocks before each test
     jest.clearAllMocks();
   });
@@ -34,8 +34,8 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const upButton = screen.getByLabelText('Move Up (W)');
@@ -52,8 +52,8 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const upButton = screen.getByLabelText('Move Up (W)');
@@ -69,12 +69,12 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const upButton = screen.getByLabelText('Move Up (W)');
-        
+
         // Touch start
         fireEvent.touchStart(upButton);
         expect(mockKeys.w).toBe(true);
@@ -95,8 +95,8 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const leftButton = screen.getByLabelText('Move Left (A)');
@@ -113,8 +113,8 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const leftButton = screen.getByLabelText('Move Left (A)');
@@ -130,12 +130,12 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const leftButton = screen.getByLabelText('Move Left (A)');
-        
+
         fireEvent.touchStart(leftButton);
         expect(mockKeys.a).toBe(true);
         expect(mockOnKeyDown).toHaveBeenCalledWith(mockKeys);
@@ -149,8 +149,8 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const downButton = screen.getByLabelText('Move Down (S)');
@@ -167,8 +167,8 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const downButton = screen.getByLabelText('Move Down (S)');
@@ -184,12 +184,12 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const downButton = screen.getByLabelText('Move Down (S)');
-        
+
         fireEvent.touchStart(downButton);
         expect(mockKeys.s).toBe(true);
         expect(mockOnKeyDown).toHaveBeenCalledWith(mockKeys);
@@ -203,8 +203,8 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const rightButton = screen.getByLabelText('Move Right (D)');
@@ -221,8 +221,8 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const rightButton = screen.getByLabelText('Move Right (D)');
@@ -238,12 +238,12 @@ describe('Controls Component', () => {
             onKeyDown={mockOnKeyDown}
             onKeyUp={mockOnKeyUp}
             keys={mockKeys}
-            shiftLabel='Test message'
-          />
+            shiftLabel="Test message"
+          />,
         );
 
         const rightButton = screen.getByLabelText('Move Right (D)');
-        
+
         fireEvent.touchStart(rightButton);
         expect(mockKeys.d).toBe(true);
         expect(mockOnKeyDown).toHaveBeenCalledWith(mockKeys);
@@ -258,8 +258,8 @@ describe('Controls Component', () => {
           onKeyDown={mockOnKeyDown}
           onKeyUp={mockOnKeyUp}
           keys={mockKeys}
-          shiftLabel='BOOST'
-        />
+          shiftLabel="BOOST"
+        />,
       );
 
       const shiftButton = screen.getByLabelText('BOOST');
@@ -276,8 +276,8 @@ describe('Controls Component', () => {
           onKeyDown={mockOnKeyDown}
           onKeyUp={mockOnKeyUp}
           keys={mockKeys}
-          shiftLabel='BOOST'
-        />
+          shiftLabel="BOOST"
+        />,
       );
 
       const shiftButton = screen.getByLabelText('BOOST');
@@ -293,12 +293,12 @@ describe('Controls Component', () => {
           onKeyDown={mockOnKeyDown}
           onKeyUp={mockOnKeyUp}
           keys={mockKeys}
-          shiftLabel='RUN'
-        />
+          shiftLabel="RUN"
+        />,
       );
 
       const shiftButton = screen.getByLabelText('RUN');
-      
+
       // Touch start
       fireEvent.touchStart(shiftButton);
       expect(mockKeys.shift).toBe(true);
@@ -325,8 +325,8 @@ describe('Controls Component', () => {
           onKeyDown={mockOnKeyDown}
           onKeyUp={mockOnKeyUp}
           keys={mockKeys}
-          shiftLabel='Test message'
-        />
+          shiftLabel="Test message"
+        />,
       );
 
       // Simulate 'w' key press
@@ -343,14 +343,14 @@ describe('Controls Component', () => {
     it('should handle keyboard keyup events', () => {
       mockKeys.w = true;
       mockKeys.shift = true;
-      
+
       render(
         <Controls
           onKeyDown={mockOnKeyDown}
           onKeyUp={mockOnKeyUp}
           keys={mockKeys}
-          shiftLabel='Test message'
-        />
+          shiftLabel="Test message"
+        />,
       );
 
       // Simulate 'w' key release
@@ -366,14 +366,14 @@ describe('Controls Component', () => {
 
     it('should ignore duplicate keydown events', () => {
       mockKeys.w = true; // Already pressed
-      
+
       render(
         <Controls
           onKeyDown={mockOnKeyDown}
           onKeyUp={mockOnKeyUp}
           keys={mockKeys}
-          shiftLabel='Test message'
-        />
+          shiftLabel="Test message"
+        />,
       );
 
       // Try to press 'w' again
@@ -383,14 +383,14 @@ describe('Controls Component', () => {
 
     it('should ignore duplicate keyup events', () => {
       // mockKeys.w is already false by default
-      
+
       render(
         <Controls
           onKeyDown={mockOnKeyDown}
           onKeyUp={mockOnKeyUp}
           keys={mockKeys}
-          shiftLabel='Test message'
-        />
+          shiftLabel="Test message"
+        />,
       );
 
       // Try to release 'w' when it's not pressed
@@ -404,14 +404,20 @@ describe('Controls Component', () => {
           onKeyDown={mockOnKeyDown}
           onKeyUp={mockOnKeyUp}
           keys={mockKeys}
-          shiftLabel='Test message'
-        />
+          shiftLabel="Test message"
+        />,
       );
 
       unmount();
 
-      expect(window.removeEventListener).toHaveBeenCalledWith('keydown', expect.any(Function));
-      expect(window.removeEventListener).toHaveBeenCalledWith('keyup', expect.any(Function));
+      expect(window.removeEventListener).toHaveBeenCalledWith(
+        'keydown',
+        expect.any(Function),
+      );
+      expect(window.removeEventListener).toHaveBeenCalledWith(
+        'keyup',
+        expect.any(Function),
+      );
     });
   });
 
@@ -419,19 +425,19 @@ describe('Controls Component', () => {
     it('should apply active class when key is pressed', () => {
       mockKeys.w = true;
       mockKeys.shift = true;
-      
+
       render(
         <Controls
           onKeyDown={mockOnKeyDown}
           onKeyUp={mockOnKeyUp}
           keys={mockKeys}
-          shiftLabel='BOOST'
-        />
+          shiftLabel="BOOST"
+        />,
       );
 
       const upButton = screen.getByLabelText('Move Up (W)');
       const shiftButton = screen.getByLabelText('BOOST');
-      
+
       // Check if active classes are applied (you might need to adjust based on your actual class names)
       expect(upButton.classList).toContain('bg-gray-500');
       expect(shiftButton.classList).toContain('bg-red-500');
@@ -439,19 +445,19 @@ describe('Controls Component', () => {
 
     it('should apply normal class when key is not pressed', () => {
       // All keys are false by default
-      
+
       render(
         <Controls
           onKeyDown={mockOnKeyDown}
           onKeyUp={mockOnKeyUp}
           keys={mockKeys}
-          shiftLabel='BOOST'
-        />
+          shiftLabel="BOOST"
+        />,
       );
 
       const upButton = screen.getByLabelText('Move Up (W)');
       const shiftButton = screen.getByLabelText('BOOST');
-      
+
       expect(upButton.classList).toContain('bg-gray-700');
       expect(shiftButton.classList).toContain('bg-red-700');
     });
