@@ -23,7 +23,7 @@ export default function Home() {
         </Link>
       </div>
       <HRTrimmed />
-      <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400 text-justify">Credits for 3rd party models and textures are in <Link href="https://github.com/NyaliaLui/twtw-games?tab=readme-ov-file#credits" target="_blank" rel="noopener noreferrer" className="underline font-medium">this README</Link>.</p>
+      <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400 text-center">Credits for 3rd party models and textures are in <Link href="https://github.com/NyaliaLui/twtw-games?tab=readme-ov-file#credits" target="_blank" rel="noopener noreferrer" className="underline font-medium">this README</Link>.</p>
     </div>
   );
 }

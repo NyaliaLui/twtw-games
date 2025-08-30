@@ -1,7 +1,7 @@
 'use client';
-import { boundarySize } from '@/app/utils';
+import { DoubleSide } from 'three';
 
-import * as THREE from 'three';
+import { snakeConfig } from '@/app/constants';
 
 export type { BoundaryProps };
 export { makeBoundaryProps, Boundary };
@@ -14,8 +14,8 @@ interface BoundaryProps {
   side?: 0 | 2 | 1 | undefined;
 };
 
-function makeBoundaryProps(position: [number, number, number], bounds: [number, number, number] = [boundarySize, 0.1, boundarySize],
-  isWireframe: boolean = true, color: string | number = 0xffffff, side: 0 | 2 | 1 | undefined = THREE.DoubleSide): BoundaryProps {
+function makeBoundaryProps(position: [number, number, number], bounds: [number, number, number] = [snakeConfig.boundarySize, 0.1, snakeConfig.boundarySize],
+  isWireframe: boolean = true, color: string | number = 0xffffff, side: 0 | 2 | 1 | undefined = DoubleSide): BoundaryProps {
   return {
     position: position,
     bounds: bounds,

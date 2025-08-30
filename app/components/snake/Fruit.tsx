@@ -1,4 +1,4 @@
-import { blockSize } from '@/app/utils';
+import { snakeConfig } from "@/app/constants";
 
 export type { FruitProps };
 export { makeFruitProps, Fruit }
@@ -9,7 +9,7 @@ interface FruitProps {
   color: string | number;
 };
 
-function makeFruitProps(position: [number, number, number], dim: number = blockSize, color: string | number = 0xff0000): FruitProps {
+function makeFruitProps(position: [number, number, number], dim: number = snakeConfig.blockSize, color: string | number = 0xff0000): FruitProps {
   return {
     position: position,
     dim: dim,

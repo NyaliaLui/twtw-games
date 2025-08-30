@@ -2,14 +2,15 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import * as THREE from 'three';
+import { Mesh, Vector3 } from 'three';
 
 import { KeyState, Controls } from '@/app/components/Controls';
 import { makeHeadProps, Head } from '@/app/components/snake/Head';
 import { makeFruitProps, Fruit } from '@/app/components/snake/Fruit';
 import { makeBoundaryProps, Boundary } from '@/app/components/snake/Boundary';
 import { makeBodyProps, BodyPart } from '@/app/components/snake/BodyPart';
-import { boundarySize, blockSize, gameOrigin, isBoundaryHit, getCollectedFruitSet, breakpointSM, isWindowDefined } from '@/app/utils';
+import { isBoundaryHit, getCollectedFruitSet, breakpointSM, isWindowDefined } from '@/app/utils';
+import { snakeConfig } from '@/app/constants';
 
 function getConditionalSizes(): { gameBoundarySize: number; gameHalfBoundarySize: number; cubeDim: number; } {
   const ret = {
@@ -21,11 +22,11 @@ function getConditionalSizes(): { gameBoundarySize: number; gameHalfBoundarySize
   // On screens larger than small breakpoint use larger sizes
   // otherwise use smaller sizes.
   if (isWindowDefined() && breakpointSM(window.innerWidth)) {
-    ret.gameBoundarySize = boundarySize;
-    ret.cubeDim = blockSize;
+    ret.gameBoundarySize = snakeConfig.boundarySize;
+    ret.cubeDim = snakeConfig.blockSize;
   } else {
-    ret.gameBoundarySize = boundarySize / 2;
-    ret.cubeDim = blockSize * 0.75;
+    ret.gameBoundarySize = snakeConfig.boundarySize / 2;
+    ret.cubeDim = snakeConfig.blockSize * 0.75;
   }
 
   ret.gameHalfBoundarySize = ret.gameBoundarySize / 2;
@@ -34,32 +35,26 @@ function getConditionalSizes(): { gameBoundarySize: number; gameHalfBoundarySize
 }
 
 export default function Snake() {
-  const initSpeed = 5;
-  const boostMultiplier = 3;
-  const maxStaminaBlocks = 4;
-  const staminaDepletionRate = 2500; // ms per block
-  const initMaxScore = 50;
-
   const { gameBoundarySize, gameHalfBoundarySize, cubeDim } = getConditionalSizes();
 
   // game state
-  const [bodyParts, setBodyParts] = useState<THREE.Vector3[]>([]); // array of Vector3
+  const [bodyParts, setBodyParts] = useState<Vector3[]>([]); // array of Vector3
   // TODO(@NyaliaLui): Re-examine head. According to React Docs, it may not be a suitable
   // candidate for a ref object because I believe the head (and body) are always changed during the
   // rendering process. Therefore, useState may be more appropriate. https://react.dev/learn/referencing-values-with-refs#when-to-use-refs
-  const headRef = useRef<THREE.Mesh | null>(null);
+  const headRef = useRef<Mesh | null>(null);
   const keysRef = useRef<KeyState>({ w: false, a: false, s: false, d: false, shift: false });
 
-  const [fruits, setFruits] = useState<THREE.Vector3[]>([]); // array of Vector3
+  const [fruits, setFruits] = useState<Vector3[]>([]); // array of Vector3
   const [fruitCount, setFruitCount] = useState(1);
 
   const [score, setScore] = useState(0);
-  const [maxScore, setMaxScore] = useState(initMaxScore);
+  const [maxScore, setMaxScore] = useState(snakeConfig.initMaxScore);
   const [level, setLevel] = useState(1);
   const [showLevelUp, setShowLevelUp] = useState(false);
 
-  const [baseSpeed, setBaseSpeed] = useState(initSpeed);
-  const [speed, setSpeed] = useState(initSpeed);
+  const [baseSpeed, setBaseSpeed] = useState(snakeConfig.initSpeed);
+  const [speed, setSpeed] = useState(snakeConfig.initSpeed);
   const [isBoosting, setIsBoosting] = useState(false);
 
   const [staminaBlocks, setStaminaBlocks] = useState(0);
@@ -71,21 +66,21 @@ export default function Snake() {
   const randPos = useCallback(() => {
     const x = Math.random() * gameBoundarySize - gameHalfBoundarySize;
     const z = Math.random() * gameBoundarySize - gameHalfBoundarySize;
-    return new THREE.Vector3(gameOrigin.x + x, gameOrigin.y, gameOrigin.z + z);
+    return new Vector3(snakeConfig.origin.x + x, snakeConfig.origin.y, snakeConfig.origin.z + z);
   }, [gameBoundarySize, gameHalfBoundarySize]);
 
   const spawnFruits = useCallback((count: number = fruitCount) => {
     // TOOD(@NyaliaLui): What happens if the snake collects two or more fruits in the same frame?
     //                  A: Currently, there is potential for fruits to spawn in the same location as the last one.
     //                 This appears in the game when it looks like collecting 1 fruit led to a double count in the score.
-    const arr: THREE.Vector3[] = [];
+    const arr: Vector3[] = [];
     for (let i = 0; i < count; i++) arr.push(randPos());
     setFruits(arr);
   }, [randPos, fruitCount]);
 
   const growSnake = useCallback((parts: number = 3) => {
     setBodyParts(prev => {
-      const headPos = headRef.current ? headRef.current.position.clone() : new THREE.Vector3();
+      const headPos = headRef.current ? headRef.current.position.clone() : new Vector3();
       const newParts = new Array(parts).fill(0).map(() => headPos.clone());
       return [...prev, ...newParts];
     });
@@ -95,11 +90,11 @@ export default function Snake() {
     setBodyParts([]);
     growSnake();
     setScore(0);
-    setBaseSpeed(initSpeed);
-    setSpeed(initSpeed);
+    setBaseSpeed(snakeConfig.initSpeed);
+    setSpeed(snakeConfig.initSpeed);
     setFruitCount(1);
     setLevel(1);
-    setMaxScore(initMaxScore);
+    setMaxScore(snakeConfig.initMaxScore);
     setStaminaBlocks(0);
     setFruitCollectedCount(0);
     setIsBoosting(false);
@@ -112,11 +107,11 @@ export default function Snake() {
   
   const startBoost = useCallback(() => {
     if (staminaTimerRef.current) return;
-    setSpeed(baseSpeed * boostMultiplier);
+    setSpeed(baseSpeed * snakeConfig.boostMultiplier);
     setIsBoosting(true);
     staminaTimerRef.current = setInterval(() => {
       setStaminaBlocks(sb => sb - 1);
-    }, staminaDepletionRate);
+    }, snakeConfig.staminaDepletionRate);
   }, [baseSpeed, staminaTimerRef]);
 
   const stopBoost = useCallback(() => {
@@ -151,7 +146,7 @@ export default function Snake() {
 
       if (staminaBlocks === 0) stopBoost();
 
-      const vel = new THREE.Vector3();
+      const vel = new Vector3();
       if (keysRef.current.w) vel.z -= speed;
       if (keysRef.current.s) vel.z += speed;
       if (keysRef.current.a) vel.x -= speed;
@@ -159,7 +154,7 @@ export default function Snake() {
       headRef.current.position.add(vel);
 
       // boundary check
-      const boundCheck = isBoundaryHit(headRef.current, gameHalfBoundarySize, gameOrigin);
+      const boundCheck = isBoundaryHit(headRef.current, gameHalfBoundarySize, snakeConfig.origin);
       if (boundCheck.isHit) {
         headRef.current.position.copy(boundCheck.pos);
         resetSnake();
@@ -179,15 +174,15 @@ export default function Snake() {
       const collectedFruitSet = getCollectedFruitSet(fruits, headRef.current, cubeDim);
 
       if (collectedFruitSet.size > 0) {
-        setScore(s => s + 5);
+        setScore(s => s + snakeConfig.incrementScore);
         growSnake(3);
-        setFruitCollectedCount(fc => fc + 1);
+        setFruitCollectedCount(fc => fc + snakeConfig.incrementFruitCollected);
         const newFruitsSet = new Set(fruits).difference(collectedFruitSet);
         setFruits([...newFruitsSet]);
       }
 
-      if (fruitCollectedCount >= 5 && staminaBlocks < maxStaminaBlocks) {
-        setStaminaBlocks(sb => sb + 1);
+      if (fruitCollectedCount >= snakeConfig.fruitPerStaminaBlock && staminaBlocks < snakeConfig.maxStaminaBlocks) {
+        setStaminaBlocks(sb => sb + snakeConfig.incrementStaminaBlock);
         setFruitCollectedCount(0);
       }
 
@@ -198,25 +193,24 @@ export default function Snake() {
       if (score >= maxScore) {
         // Check the level on the current frame first since we do not
         // know when the next frame will load.
-        if ((level+1) % 3 === 0) {
-          setFruitCount(fc => fc + 1);
+        if ((level+1) % snakeConfig.levelsToIncrementFruit === 0) {
+          setFruitCount(fc => fc + snakeConfig.incrementFruitCount);
           // TODO(@NyaliaLui): This is a hack for spawing the correct amount of fruits
           // between frames. Please clean this up.
-          spawnFruits(fruitCount + 1);
+          spawnFruits(fruitCount + snakeConfig.incrementFruitCount);
         } else {
           spawnFruits();
         }
 
-        setLevel(l => l + 1);
-        setBaseSpeed(bs => bs + 3);
+        setLevel(l => l + snakeConfig.incrementLevel);
+        setBaseSpeed(bs => bs + snakeConfig.incrementBaseSpeed);
         // Add to the current frame's base speed so we don't have
         // to wait for the next frame.
-        // TODO(@NyaliaLui): Remove magic numbers
-        const nb = baseSpeed + 3;
-        setSpeed(isBoosting ? nb * boostMultiplier : nb);
-        setMaxScore(ms => ms + initMaxScore);
+        const nb = baseSpeed + snakeConfig.incrementBaseSpeed;
+        setSpeed(isBoosting ? nb * snakeConfig.boostMultiplier : nb);
+        setMaxScore(ms => ms + snakeConfig.initMaxScore);
         setShowLevelUp(true);
-        setTimeout(() => setShowLevelUp(false), 2000);
+        setTimeout(() => setShowLevelUp(false), snakeConfig.levelUpTimeout);
       }
     })
 
@@ -245,8 +239,8 @@ export default function Snake() {
 
       {/* Game Canvas */}
       <Canvas gl={{antialias: true, alpha: true}} camera={{ fov: 75, near: 0.1, far: 2000, position: [0, 1000, 0]}} onCreated={(state) => {state.camera.lookAt(0, 0, 0);}}>
-        <Boundary boundProps={makeBoundaryProps([gameOrigin.x, gameOrigin.y, gameOrigin.z], [gameBoundarySize, 0.1, gameBoundarySize])}/>
-        <Head headProps={makeHeadProps(headRef, [gameOrigin.x, gameOrigin.y, gameOrigin.z], cubeDim)} />
+        <Boundary boundProps={makeBoundaryProps([snakeConfig.origin.x, snakeConfig.origin.y, snakeConfig.origin.z], [gameBoundarySize, 0.1, gameBoundarySize])}/>
+        <Head headProps={makeHeadProps(headRef, [snakeConfig.origin.x, snakeConfig.origin.y, snakeConfig.origin.z], cubeDim)} />
         {bodyParts.map((pos, i) => (
           <BodyPart key={i} bodyProps={makeBodyProps([pos.x, pos.y, pos.z], cubeDim)}/>
         ))}

@@ -3,12 +3,15 @@ import { expect } from '@jest/globals';
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 
 import React from 'react';
-import * as THREE from 'three';
+import { Mesh, Vector3 } from 'three';
 
 import { ChildrenType, TestProps, checkBoxMesh, makeSnakeHeadProps } from './utils/snake';
 import { Head } from '@/app/components/snake/Head';
 import { BoundaryProps, makeBoundaryProps, Boundary } from '@/app/components/snake/Boundary';
-import { gameOrigin, halfBoundary, isBoundaryHit } from '@/app/utils';
+import { isBoundaryHit } from '@/app/utils';
+import { snakeConfig } from '@/app/constants';
+
+const halfBoundary = snakeConfig.boundarySize / 2;
 
 describe('Test Snake boundaries', () => {
     it('Renders game boundaries', async () => {
@@ -26,10 +29,10 @@ describe('Test Snake boundaries', () => {
     });
 
     it('Should register boundary collision', async () => {
-        const { spy, headProps} = makeSnakeHeadProps([gameOrigin.x, gameOrigin.y, gameOrigin.z]);
+        const { spy, headProps} = makeSnakeHeadProps([snakeConfig.origin.x, snakeConfig.origin.y, snakeConfig.origin.z]);
         await ReactThreeTestRenderer.create(<Head headProps={headProps} />);
 
-        const checkBoundary = (head: THREE.Mesh | null, expectedPos: THREE.Vector3, expectedIsHit: boolean) => {
+        const checkBoundary = (head: Mesh | null, expectedPos: Vector3, expectedIsHit: boolean) => {
             const { pos, isHit } = isBoundaryHit(head);
             expect(pos).toEqual(expectedPos);
             expect(isHit).toBe(expectedIsHit);
@@ -42,7 +45,7 @@ describe('Test Snake boundaries', () => {
         checkBoundary(headProps.ref.current, headProps.ref.current.position, false);
 
         // Null head
-        checkBoundary(null, new THREE.Vector3(), false);
+        checkBoundary(null, new Vector3(), false);
 
         const originalPos = headProps.ref.current.position.clone();
         const expectedPos = headProps.ref.current.position.clone();
@@ -61,13 +64,13 @@ describe('Test Snake boundaries', () => {
         expectedPos.x = originalPos.x;
 
         // Left Boundary
-        headProps.ref.current.position.z = -(halfBoundary + -gameOrigin.z) - 1;
-        expectedPos.z = -(halfBoundary + -gameOrigin.z);
+        headProps.ref.current.position.z = -(halfBoundary + -snakeConfig.origin.z) - 1;
+        expectedPos.z = -(halfBoundary + -snakeConfig.origin.z);
         checkBoundary(headProps.ref.current, expectedPos, true);
 
         // Right Boundary
-        headProps.ref.current.position.z = (halfBoundary + gameOrigin.z) + 1;
-        expectedPos.z = (halfBoundary + gameOrigin.z);
+        headProps.ref.current.position.z = (halfBoundary + snakeConfig.origin.z) + 1;
+        expectedPos.z = (halfBoundary + snakeConfig.origin.z);
         checkBoundary(headProps.ref.current, expectedPos, true);
 
         spy.mockRestore();

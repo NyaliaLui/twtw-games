@@ -3,12 +3,13 @@ import { expect } from '@jest/globals';
 import ReactThreeTestRenderer from '@react-three/test-renderer';
 
 import React from 'react';
-import * as THREE from 'three';
+import { Mesh, Vector3 } from 'three';
 
 import { ChildrenType, TestProps, checkBoxMesh, makeSnakeHeadProps } from './utils/snake';
 import { Head } from '@/app/components/snake/Head';
 import { FruitProps, makeFruitProps, Fruit } from '@/app/components/snake/Fruit';
-import { blockSize, gameOrigin, getCollectedFruitSet } from '@/app/utils';
+import { getCollectedFruitSet } from '@/app/utils';
+import { snakeConfig } from '@/app/constants';
 
 describe('Test Snake fruit', () => {
     it('Renders fruit', async () => {
@@ -24,12 +25,12 @@ describe('Test Snake fruit', () => {
     });
 
     it('Should register fruit collision', async () => {
-        const testFruits = [new THREE.Vector3(gameOrigin.x, gameOrigin.y, gameOrigin.z + (blockSize*2))];
+        const testFruits = [new Vector3(snakeConfig.origin.x, snakeConfig.origin.y, snakeConfig.origin.z + (snakeConfig.blockSize*2))];
         const { spy, headProps} = makeSnakeHeadProps([testFruits[0].x, testFruits[0].y, testFruits[0].z]);
         await ReactThreeTestRenderer.create(<Head headProps={headProps} />);
 
-        const checkFruitCollision = (fruits: THREE.Vector3[], head: THREE.Mesh | null, expectedSize: number, hasFruit: boolean) => {
-            const collectedFruitSet: Set<THREE.Vector3> = getCollectedFruitSet(fruits, head);
+        const checkFruitCollision = (fruits: Vector3[], head: Mesh | null, expectedSize: number, hasFruit: boolean) => {
+            const collectedFruitSet: Set<Vector3> = getCollectedFruitSet(fruits, head);
             expect(collectedFruitSet.size).toEqual(expectedSize);
             expect(collectedFruitSet.has(fruits[0])).toBe(hasFruit);
         };
@@ -44,7 +45,7 @@ describe('Test Snake fruit', () => {
         checkFruitCollision(testFruits, null, 0, false);
 
         // No fruit collision occurs
-        headProps.ref.current.position.z = gameOrigin.z;
+        headProps.ref.current.position.z = snakeConfig.origin.z;
         checkFruitCollision(testFruits, headProps.ref.current, 0, false);
 
         spy.mockRestore();

@@ -1,24 +1,17 @@
-import * as THREE from 'three';
+import { Mesh, Vector3 } from 'three';
+
+import { snakeConfig } from '@/app/constants';
 
 export { 
-  boundarySize,
-  halfBoundary,
-  blockSize,
-  gameOrigin,
   isBoundaryHit,
   getCollectedFruitSet,
   breakpointSM,
   isWindowDefined
 };
 
-const boundarySize = 1000;
-const halfBoundary = boundarySize / 2;
-const blockSize = 20;
-const gameOrigin = new THREE.Vector3(0, 0, 0);
-
-function isBoundaryHit(head: THREE.Mesh | null, boundaryDim: number = halfBoundary, origin: THREE.Vector3 = gameOrigin) {
+function isBoundaryHit(head: Mesh | null, boundaryDim: number = snakeConfig.boundarySize / 2, origin: Vector3 = snakeConfig.origin) {
   const ret = {
-    pos: new THREE.Vector3(),
+    pos: new Vector3(),
     isHit: false
   };
 
@@ -36,10 +29,10 @@ function isBoundaryHit(head: THREE.Mesh | null, boundaryDim: number = halfBounda
   return ret;
 }
 
-function getCollectedFruitSet(fruits: THREE.Vector3[], head: THREE.Mesh | null, fruitSize: number = blockSize): Set<THREE.Vector3> {
-  if (!head) return new Set<THREE.Vector3>();
+function getCollectedFruitSet(fruits: Vector3[], head: Mesh | null, fruitSize: number = snakeConfig.blockSize): Set<Vector3> {
+  if (!head) return new Set<Vector3>();
 
-  return new Set<THREE.Vector3>(fruits.filter((fruit) => {
+  return new Set<Vector3>(fruits.filter((fruit) => {
     return fruit.distanceTo(head.position) < fruitSize;
   }));
 }
@@ -48,7 +41,7 @@ function getCollectedFruitSet(fruits: THREE.Vector3[], head: THREE.Mesh | null, 
 // Root Element (<html>) size. https://tailwindcss.com/docs/responsive-design
 function breakpointSM(width: number): boolean {
   const rootElementSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-  return width >= (40 * rootElementSize);
+  return width >= (snakeConfig.breakpoints.SM * rootElementSize);
 }
 
 // TODO(@NyaliaLui): Checking for undefined window seems like a hack, consider making a custom hook for window size.

@@ -2,12 +2,12 @@ import '@testing-library/jest-dom';
 import { expect } from '@jest/globals';
 import { useAnimations } from '@react-three/drei';
 import ReactThreeTestRenderer from '@react-three/test-renderer';
-import * as THREE from 'three';
+import { Group } from 'three';
 
 import { KeyState } from '@/app/components/Controls';
 import { Soldier } from '@/app/components/animation/Soldier';
 
-const testScene = new THREE.Group();
+const testScene = new Group();
 
 jest.mock('@react-three/drei', () => {
   const original = jest.requireActual('@react-three/drei');

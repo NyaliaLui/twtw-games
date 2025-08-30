@@ -4,7 +4,7 @@ import { Object3D, Object3DEventMap } from 'three';
 import { ReactThreeTest } from '@react-three/test-renderer';
 
 import React from 'react';
-import * as THREE from 'three';
+import { Mesh } from 'three';
 
 import { HeadProps, makeHeadProps } from '@/app/components/snake/Head';
 import { FruitProps } from '@/app/components/snake/Fruit';
@@ -39,7 +39,7 @@ function checkBoxMesh(renderer: Renderer, props: TestProps, componentCallback: C
 }
 
 function makeSnakeHeadProps(position: [number, number, number]) {
-    const mockRef = { current: new THREE.Mesh() } as React.MutableRefObject<THREE.Mesh | null>;
+    const mockRef = { current: new Mesh() } as React.MutableRefObject<Mesh | null>;
     const spy = jest.spyOn(React, 'useRef').mockReturnValue(mockRef);
     const headProps = makeHeadProps(mockRef, position);
 
