@@ -50,10 +50,11 @@ export default function Snake() {
   // game state
   const [bodyParts, setBodyParts] = useState<Vector3[]>(
     snakeConfig.initBodyParts,
-  ); // array of Vector3
-  // TODO(@NyaliaLui): Re-examine head. According to React Docs, it may not be a suitable
-  // candidate for a ref object because I believe the head (and body) are always changed during the
+  );
+  // Re-examine head. According to React docs, it may not be a suitable
+  // candidate for a ref object because the head (and body) are always changed during the
   // rendering process. Therefore, useState may be more appropriate. https://react.dev/learn/referencing-values-with-refs#when-to-use-refs
+  // This is tracked at https://github.com/NyaliaLui/twtw-games/issues/27.
   const headRef = useRef<Mesh | null>(snakeConfig.initHead);
   const keysRef = useRef<KeyState>(initKeyState());
 
@@ -245,8 +246,9 @@ export default function Snake() {
         // know when the next frame will load.
         if ((level + 1) % snakeConfig.levelsToIncrementFruit === 0) {
           setFruitCount((fc) => fc + snakeConfig.incrementFruitCount);
-          // TODO(@NyaliaLui): This is a hack for spawing the correct amount of fruits
-          // between frames. Please clean this up.
+          // This is a hack for spawing the correct amount of fruits
+          // between frames. Please look into an alternative.
+          // This is tracked at https://github.com/NyaliaLui/twtw-games/issues/28.
           spawnFruits(fruitCount + snakeConfig.incrementFruitCount);
         } else {
           spawnFruits();
@@ -256,6 +258,7 @@ export default function Snake() {
         setBaseSpeed((bs) => bs + snakeConfig.incrementBaseSpeed);
         // Add to the current frame's base speed so we don't have
         // to wait for the next frame.
+        // This is tracked at https://github.com/NyaliaLui/twtw-games/issues/28.
         const nb = baseSpeed + snakeConfig.incrementBaseSpeed;
         setSpeed(isBoosting ? nb * snakeConfig.boostMultiplier : nb);
         setMaxScore((ms) => ms + snakeConfig.initMaxScore);

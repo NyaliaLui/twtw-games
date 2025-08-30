@@ -11,8 +11,8 @@ import { animationConfig } from '../constants';
 
 export default function Animation() {
   const keysRef = useRef<KeyState>(initKeyState());
-  // TODO(@NyaliaLui): Forcing a re-render this way seems like a waste of memory. Look into an alternative.
-  // Add state to force re-renders. Addressed CSS Class change problem in https://github.com/NyaliaLui/twtw-games/issues/9
+  // Add state to force re-renders and address CSS Class change problem in https://github.com/NyaliaLui/twtw-games/issues/9.
+  // Forcing a re-render this way seems like a waste of memory. This is tracked at https://github.com/NyaliaLui/twtw-games/issues/26.
   const [, forceUpdate] = useReducer((dummy) => !dummy, true);
   const handleKeyDown = useCallback(() => {
     forceUpdate();

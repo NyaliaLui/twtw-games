@@ -53,7 +53,8 @@ function breakpointSM(width: number): boolean {
   return width >= snakeConfig.breakpoints.SM * rootElementSize;
 }
 
-// TODO(@NyaliaLui): Checking for undefined window seems like a hack, consider making a custom hook for window size.
+// Checking for undefined window seems like a hack, consider making a custom hook for window size.
+// This is tracked at https://github.com/NyaliaLui/twtw-games/issues/25.
 function isWindowDefined(): boolean {
   return typeof window !== 'undefined';
 }
