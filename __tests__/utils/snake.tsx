@@ -14,38 +14,50 @@ export type { Renderer, ChildrenType, TestProps };
 export { checkBoxMesh, makeSnakeHeadProps };
 
 type Renderer = ReactThreeTest.Renderer;
-type ChildrenType = ReactThreeTest.ReactThreeTestInstance<Object3D<Object3DEventMap>>;
+type ChildrenType = ReactThreeTest.ReactThreeTestInstance<
+  Object3D<Object3DEventMap>
+>;
 type TestProps = BoundaryProps | FruitProps | HeadProps;
 
-type ComponentCheckFn = (geometry: ChildrenType, material: ChildrenType, props: TestProps) => void;
+type ComponentCheckFn = (
+  geometry: ChildrenType,
+  material: ChildrenType,
+  props: TestProps,
+) => void;
 
-function checkBoxMesh(renderer: Renderer, props: TestProps, componentCallback: ComponentCheckFn) {
-    // ✅ Check mesh position
-    const mesh = renderer.scene.children[0];
-    expect(mesh.type).toBe('Mesh');
-    expect(mesh.props.position).toEqual(props.position);
+function checkBoxMesh(
+  renderer: Renderer,
+  props: TestProps,
+  componentCallback: ComponentCheckFn,
+) {
+  // ✅ Check mesh position
+  const mesh = renderer.scene.children[0];
+  expect(mesh.type).toBe('Mesh');
+  expect(mesh.props.position).toEqual(props.position);
 
-    // ✅ Check geometry
-    const geometry = mesh.allChildren[0];
-    expect(geometry.type).toBe('BoxGeometry');
+  // ✅ Check geometry
+  const geometry = mesh.allChildren[0];
+  expect(geometry.type).toBe('BoxGeometry');
 
-    // ✅ Check material
-    const material = mesh.allChildren[1];
-    expect(material.type).toBe('MeshBasicMaterial');
-    expect(material.props.color).toEqual(props.color);
+  // ✅ Check material
+  const material = mesh.allChildren[1];
+  expect(material.type).toBe('MeshBasicMaterial');
+  expect(material.props.color).toEqual(props.color);
 
-    // Check component specific props
-    componentCallback(geometry, material, props);
+  // Check component specific props
+  componentCallback(geometry, material, props);
 }
 
 function makeSnakeHeadProps(position: [number, number, number]) {
-    const mockRef = { current: new Mesh() } as React.MutableRefObject<Mesh | null>;
-    const spy = jest.spyOn(React, 'useRef').mockReturnValue(mockRef);
-    const headProps = makeHeadProps(mockRef, position);
+  const mockRef = {
+    current: new Mesh(),
+  } as React.MutableRefObject<Mesh | null>;
+  const spy = jest.spyOn(React, 'useRef').mockReturnValue(mockRef);
+  const headProps = makeHeadProps(mockRef, position);
 
-    return {
-        mockRef: mockRef,
-        spy: spy,
-        headProps: headProps
-    };
+  return {
+    mockRef: mockRef,
+    spy: spy,
+    headProps: headProps,
+  };
 }

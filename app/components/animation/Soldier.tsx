@@ -4,13 +4,13 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import { Group, AnimationAction, Vector3 } from 'three';
 
-import { KeyState } from "@/app/components/Controls";
+import { KeyState } from '@/app/components/Controls';
 import { breakpointSM } from '@/app/utils';
 import { animationConfig } from '@/app/constants';
 
 export { Soldier };
 
-function Soldier({ keys, gltfPath }: { keys: KeyState, gltfPath: string }) {
+function Soldier({ keys, gltfPath }: { keys: KeyState; gltfPath: string }) {
   const group = useRef<Group>(null);
   const { scene, animations } = useGLTF(gltfPath);
   const { actions, mixer } = useAnimations(animations, scene);
@@ -22,8 +22,12 @@ function Soldier({ keys, gltfPath }: { keys: KeyState, gltfPath: string }) {
 
   // On screens larger than small breakpoint use sm scale
   // otherwise use default.
-  scene.scale.setScalar(breakpointSM(size.width) ? animationConfig.scale.soldier.sm : animationConfig.scale.soldier.default);
-  
+  scene.scale.setScalar(
+    breakpointSM(size.width)
+      ? animationConfig.scale.soldier.sm
+      : animationConfig.scale.soldier.default,
+  );
+
   useEffect(() => {
     if (!actions) return;
     Object.keys(actions).forEach((name) => {
@@ -53,15 +57,21 @@ function Soldier({ keys, gltfPath }: { keys: KeyState, gltfPath: string }) {
     const moving = moveDir.lengthSq() > 0;
     if (moving) {
       moveDir.normalize();
-      const speed = animationConfig.baseSpeed * animationConfig.runMultiplier(keys.shift);
+      const speed =
+        animationConfig.baseSpeed * animationConfig.runMultiplier(keys.shift);
       group.current.position.add(moveDir.clone().multiplyScalar(speed));
       const angle = Math.atan2(moveDir.x, moveDir.z);
       group.current.rotation.y = angle + Math.PI;
     }
 
-    const target = moving ? (keys.shift && anims.current['run'] ? 'run' : 'walk') : 'idle';
+    const target = moving
+      ? keys.shift && anims.current['run']
+        ? 'run'
+        : 'walk'
+      : 'idle';
     if (anims.current[target] && current !== target) {
-      if (current && anims.current[current]) anims.current[current].fadeOut(animationConfig.fadeDuration);
+      if (current && anims.current[current])
+        anims.current[current].fadeOut(animationConfig.fadeDuration);
       anims.current[target].reset().fadeIn(animationConfig.fadeDuration).play();
       setCurrent(target);
     }

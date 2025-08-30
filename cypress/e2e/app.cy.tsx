@@ -7,9 +7,11 @@ describe('Root Navigation Checks', () => {
     // === NAV ===
     cy.get('nav').within(() => {
       // Home link with <span> text
-      cy.get('a[href="/"]').first().within(() => {
-        cy.get('span').contains('Games & Animations');
-      });
+      cy.get('a[href="/"]')
+        .first()
+        .within(() => {
+          cy.get('span').contains('Games & Animations');
+        });
 
       // Hamburger button
       cy.get('button[data-collapse-toggle="navbar-hamburger"]')
@@ -25,13 +27,18 @@ describe('Root Navigation Checks', () => {
     cy.get('footer').within(() => {
       cy.get('a[href="https://www.nyaliasoftware.solutions/"]').should('exist');
       cy.get('a[href="https://www.facebook.com/cityoftopeka"]').should('exist');
-      cy.get('a[href="https://www.instagram.com/cityoftopeka/"]').should('exist');
-      cy.get('a[href="https://github.com/NyaliaLui/twtw-games"]').should('exist');
+      cy.get('a[href="https://www.instagram.com/cityoftopeka/"]').should(
+        'exist',
+      );
+      cy.get('a[href="https://github.com/NyaliaLui/twtw-games"]').should(
+        'exist',
+      );
     });
 
     // === SCRIPT ===
-    cy.get('script[src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"]')
-      .should('exist');
+    cy.get(
+      'script[src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"]',
+    ).should('exist');
   });
 
   it('should render the about us content', () => {

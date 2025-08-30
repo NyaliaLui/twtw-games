@@ -19,11 +19,17 @@ function World() {
 
   // On screens larger than small breakpoint use small scale
   // otherwise use the default scale.
-  scene.scale.setScalar(breakpointSM(size.width) ? animationConfig.scale.world.sm : animationConfig.scale.world.default);
+  scene.scale.setScalar(
+    breakpointSM(size.width)
+      ? animationConfig.scale.world.sm
+      : animationConfig.scale.world.default,
+  );
 
   return (
     <mesh rotation-x={animationConfig.groundRotation} receiveShadow={true}>
-      <planeGeometry args={[animationConfig.groundDim, animationConfig.groundDim]} />
+      <planeGeometry
+        args={[animationConfig.groundDim, animationConfig.groundDim]}
+      />
       <meshStandardMaterial map={grass} />
     </mesh>
   );

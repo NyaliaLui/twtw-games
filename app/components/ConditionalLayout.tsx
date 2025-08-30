@@ -1,16 +1,23 @@
 'use client';
 import { usePathname } from 'next/navigation';
-import Image from "next/image";
+import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback } from 'react';
 
 import LogoImage from '@/public/TWTWLogo.png';
 import { rootConfig } from '@/app/constants';
 
-export default function ConditionalLayout({ children }: { children: React.ReactNode }) {
-  const hideHamburger = useCallback(() => document.getElementById('navbar-hamburger')?.classList.add('hidden'), []);
+export default function ConditionalLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const hideHamburger = useCallback(
+    () => document.getElementById('navbar-hamburger')?.classList.add('hidden'),
+    [],
+  );
   const pathname = usePathname();
-  
+
   // Define pages where navigation/footer should be hidden
   const hideLayoutPages = ['/snake', '/animation'];
   const shouldHideLayout = hideLayoutPages.includes(pathname);
@@ -18,13 +25,24 @@ export default function ConditionalLayout({ children }: { children: React.ReactN
   if (shouldHideLayout) {
     return (
       <>
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="fixed top-2 lg:top-4 left-4 z-50 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
           aria-label="Exit to Main Menu"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={rootConfig.strokeWidth} d="M15 19l-7-7 7-7" />
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={rootConfig.strokeWidth}
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
           <span className="text-xs sm:text-sm">Exit</span>
         </Link>
@@ -38,41 +56,63 @@ export default function ConditionalLayout({ children }: { children: React.ReactN
       {/* Navigation */}
       <nav className="sticky top-0 z-50 border-b border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-            <Image src={LogoImage} className="h-8 w-25 sm:w-30" alt="TWTW Logo" />
-            <span className="self-center text-lg md:text-2xl font-semibold whitespace-nowrap dark:text-white">Games & Animations</span>
+          <Link
+            href="/"
+            className="flex items-center space-x-3 rtl:space-x-reverse"
+          >
+            <Image
+              src={LogoImage}
+              className="h-8 w-25 sm:w-30"
+              alt="TWTW Logo"
+            />
+            <span className="self-center text-lg md:text-2xl font-semibold whitespace-nowrap dark:text-white">
+              Games & Animations
+            </span>
           </Link>
-          <button 
-            data-collapse-toggle="navbar-hamburger" 
-            type="button" 
-            className="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" 
-            aria-controls="navbar-hamburger" 
+          <button
+            data-collapse-toggle="navbar-hamburger"
+            type="button"
+            className="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            aria-controls="navbar-hamburger"
             aria-expanded="false"
             onClick={(e) => {
               const target = document.getElementById('navbar-hamburger');
               if (target) {
                 target.classList.toggle('hidden');
-                e.currentTarget.setAttribute('aria-expanded', 
-                  target.classList.contains('hidden') ? 'false' : 'true'
+                e.currentTarget.setAttribute(
+                  'aria-expanded',
+                  target.classList.contains('hidden') ? 'false' : 'true',
                 );
               }
             }}
           >
             <span className="sr-only">Open main menu</span>
-            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15"/>
+            <svg
+              className="w-5 h-5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 17 14"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M1 1h15M1 7h15M1 13h15"
+              />
             </svg>
           </button>
-          
+
           {/* Mobile menu - positioned absolutely to overlay content */}
-          <div 
-            className="hidden absolute top-full left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg" 
+          <div
+            className="hidden absolute top-full left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg"
             id="navbar-hamburger"
           >
             <ul className="flex flex-col font-medium p-4 space-y-2">
               <li>
-                <Link 
-                  href="/snake" 
+                <Link
+                  href="/snake"
                   className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white transition-colors"
                   onClick={hideHamburger}
                 >
@@ -80,8 +120,8 @@ export default function ConditionalLayout({ children }: { children: React.ReactN
                 </Link>
               </li>
               <li>
-                <Link 
-                  href="/animation" 
+                <Link
+                  href="/animation"
                   className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white transition-colors"
                   onClick={hideHamburger}
                 >
@@ -94,34 +134,76 @@ export default function ConditionalLayout({ children }: { children: React.ReactN
       </nav>
 
       {/* Main content with proper spacing */}
-      <main>
-        {children}
-      </main>
+      <main>{children}</main>
 
       {/* Footer - not sticky, positioned normally at bottom */}
       <footer className="w-full bg-white border-t border-gray-200 shadow-sm md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
         <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
           <div className="sm:flex sm:items-center sm:justify-between">
             <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
-              © 2025 <Link href="https://www.nyaliasoftware.solutions/" className="hover:underline">Nyalia&apos;s Software Solutions</Link>. All Rights Reserved.
+              © 2025{' '}
+              <Link
+                href="https://www.nyaliasoftware.solutions/"
+                className="hover:underline"
+              >
+                Nyalia&apos;s Software Solutions
+              </Link>
+              . All Rights Reserved.
             </span>
             <div className="flex mt-4 sm:justify-center sm:mt-0">
-              <Link href="https://www.facebook.com/cityoftopeka" className="text-gray-500 hover:text-gray-900 dark:hover:text-white">
-                <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 8 19">
-                  <path fillRule="evenodd" d="M6.135 3H8V0H6.135a4.147 4.147 0 0 0-4.142 4.142V6H0v3h2v9.938h3V9h2.021l.592-3H5V3.591A.6.6 0 0 1 5.592 3h.543Z" clipRule="evenodd"/>
+              <Link
+                href="https://www.facebook.com/cityoftopeka"
+                className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+              >
+                <svg
+                  className="w-4 h-4"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 8 19"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M6.135 3H8V0H6.135a4.147 4.147 0 0 0-4.142 4.142V6H0v3h2v9.938h3V9h2.021l.592-3H5V3.591A.6.6 0 0 1 5.592 3h.543Z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 <span className="sr-only">Facebook</span>
               </Link>
-              <Link href="https://www.instagram.com/cityoftopeka/" className="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
-                <svg className="w-4 h-4" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+              <Link
+                href="https://www.instagram.com/cityoftopeka/"
+                className="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  viewBox="0 0 24 24"
+                >
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                 </svg>
                 <span className="sr-only">Instagram</span>
               </Link>
-              <Link href="https://github.com/NyaliaLui/twtw-games" className="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5">
-                <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 .333A9.911 9.911 0 0 0 6.866 19.65c.5.092.678-.215.678-.477 0-.237-.01-1.017-.014-1.845-2.757.6-3.338-1.169-3.338-1.169a2.627 2.627 0 0 0-1.1-1.451c-.9-.615.07-.6.07-.6a2.084 2.084 0 0 1 1.518 1.021 2.11 2.11 0 0 0 2.884.823c.044-.503.268-.973.63-1.325-2.2-.25-4.516-1.1-4.516-4.9A3.832 3.832 0 0 1 4.7 7.068a3.56 3.56 0 0 1 .095-2.623s.832-.266 2.726 1.016a9.409 9.409 0 0 1 4.962 0c1.89-1.282 2.717-1.016 2.717-1.016.366.83.402 1.768.1 2.623a3.827 3.827 0 0 1 1.02 2.659c0 3.807-2.319 4.644-4.525 4.889a2.366 2.366 0 0 1 .673 1.834c0 1.326-.012 2.394-.012 2.72 0 .263.18.572.681.475A9.911 9.911 0 0 0 10 .333Z" clipRule="evenodd"/>
+              <Link
+                href="https://github.com/NyaliaLui/twtw-games"
+                className="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5"
+              >
+                <svg
+                  className="w-4 h-4"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 .333A9.911 9.911 0 0 0 6.866 19.65c.5.092.678-.215.678-.477 0-.237-.01-1.017-.014-1.845-2.757.6-3.338-1.169-3.338-1.169a2.627 2.627 0 0 0-1.1-1.451c-.9-.615.07-.6.07-.6a2.084 2.084 0 0 1 1.518 1.021 2.11 2.11 0 0 0 2.884.823c.044-.503.268-.973.63-1.325-2.2-.25-4.516-1.1-4.516-4.9A3.832 3.832 0 0 1 4.7 7.068a3.56 3.56 0 0 1 .095-2.623s.832-.266 2.726 1.016a9.409 9.409 0 0 1 4.962 0c1.89-1.282 2.717-1.016 2.717-1.016.366.83.402 1.768.1 2.623a3.827 3.827 0 0 1 1.02 2.659c0 3.807-2.319 4.644-4.525 4.889a2.366 2.366 0 0 1 .673 1.834c0 1.326-.012 2.394-.012 2.72 0 .263.18.572.681.475A9.911 9.911 0 0 0 10 .333Z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 <span className="sr-only">GitHub</span>
               </Link>

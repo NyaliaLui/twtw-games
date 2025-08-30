@@ -20,19 +20,22 @@ jest.mock('@react-three/drei', () => {
 });
 
 describe('Test Ground and Sky', () => {
-    it('Renders ground and sky', async () => {
-        const renderer = await ReactThreeTestRenderer.create(<World />);
-        const mesh = renderer.scene.children[0];
-        expect(mesh.type).toBe('Mesh');
-        expect(mesh.props['rotation-x']).toEqual(animationConfig.groundRotation);
-        expect(mesh.props.receiveShadow).toBe(true);
+  it('Renders ground and sky', async () => {
+    const renderer = await ReactThreeTestRenderer.create(<World />);
+    const mesh = renderer.scene.children[0];
+    expect(mesh.type).toBe('Mesh');
+    expect(mesh.props['rotation-x']).toEqual(animationConfig.groundRotation);
+    expect(mesh.props.receiveShadow).toBe(true);
 
-        const plane = mesh.allChildren[0];
-        expect(plane.type).toBe('PlaneGeometry');
-        expect(plane.props.args).toEqual([animationConfig.groundDim, animationConfig.groundDim]);
+    const plane = mesh.allChildren[0];
+    expect(plane.type).toBe('PlaneGeometry');
+    expect(plane.props.args).toEqual([
+      animationConfig.groundDim,
+      animationConfig.groundDim,
+    ]);
 
-        const material = mesh.allChildren[1];
-        expect(material.type).toBe('MeshStandardMaterial');
-        expect(material.props.map).toEqual(testTexture);
-    });
+    const material = mesh.allChildren[1];
+    expect(material.type).toBe('MeshStandardMaterial');
+    expect(material.props.map).toEqual(testTexture);
+  });
 });
