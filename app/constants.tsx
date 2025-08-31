@@ -37,7 +37,7 @@ const snakeConfig = {
     snakeHead: 0x00ff00,
     snakeBody: 0x00aa00,
     fruit: 0xff0000,
-    bondary: 0xffffff,
+    boundary: 0xffffff,
   },
   cubeDimSmallMultiplier: 0.75,
   origin: new Vector3(0, 0, 0),

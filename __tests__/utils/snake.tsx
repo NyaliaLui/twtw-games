@@ -6,9 +6,9 @@ import { ReactThreeTest } from '@react-three/test-renderer';
 import React from 'react';
 import { Mesh } from 'three';
 
-import { HeadProps, makeHeadProps } from '@/app/components/snake/Head';
-import { FruitProps } from '@/app/components/snake/Fruit';
+import { snakeConfig } from '@/app/constants';
 import { BoundaryProps } from '@/app/components/snake/Boundary';
+import { makeCubeProps, CubeProps } from '@/app/components/snake/Cube';
 
 export type { Renderer, ChildrenType, TestProps };
 export { checkBoxMesh, makeSnakeHeadProps };
@@ -17,7 +17,7 @@ type Renderer = ReactThreeTest.Renderer;
 type ChildrenType = ReactThreeTest.ReactThreeTestInstance<
   Object3D<Object3DEventMap>
 >;
-type TestProps = BoundaryProps | FruitProps | HeadProps;
+type TestProps = BoundaryProps | CubeProps;
 
 type ComponentCheckFn = (
   geometry: ChildrenType,
@@ -53,7 +53,12 @@ function makeSnakeHeadProps(position: [number, number, number]) {
     current: new Mesh(),
   } as React.MutableRefObject<Mesh | null>;
   const spy = jest.spyOn(React, 'useRef').mockReturnValue(mockRef);
-  const headProps = makeHeadProps(mockRef, position);
+  const headProps = makeCubeProps(
+    position,
+    snakeConfig.blockSize,
+    snakeConfig.colors.snakeHead,
+    mockRef,
+  );
 
   return {
     mockRef: mockRef,

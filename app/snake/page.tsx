@@ -5,16 +5,17 @@ import { OrbitControls } from '@react-three/drei';
 import { Mesh, Vector3 } from 'three';
 
 import { KeyState, Controls, initKeyState } from '@/app/components/Controls';
-import { makeHeadProps, Head } from '@/app/components/snake/Head';
-import { makeFruitProps, Fruit } from '@/app/components/snake/Fruit';
+import { Head } from '@/app/components/snake/Head';
+import { Fruit } from '@/app/components/snake/Fruit';
 import { makeBoundaryProps, Boundary } from '@/app/components/snake/Boundary';
-import { makeBodyProps, BodyPart } from '@/app/components/snake/BodyPart';
+import { BodyPart } from '@/app/components/snake/BodyPart';
 import {
   isBoundaryHit,
   getCollectedFruitSet,
   breakpointSM,
   isWindowDefined,
 } from '@/app/utils';
+import { makeCubeProps } from '@/app/components/snake/Cube';
 import { snakeConfig } from '@/app/constants';
 
 function getConditionalSizes(): {
@@ -320,22 +321,31 @@ export default function Snake() {
           )}
         />
         <Head
-          headProps={makeHeadProps(
-            headRef,
+          headProps={makeCubeProps(
             [snakeConfig.origin.x, snakeConfig.origin.y, snakeConfig.origin.z],
             cubeDim,
+            snakeConfig.colors.snakeHead,
+            headRef,
           )}
         />
         {bodyParts.map((pos, i) => (
           <BodyPart
             key={i}
-            bodyProps={makeBodyProps([pos.x, pos.y, pos.z], cubeDim)}
+            bodyProps={makeCubeProps(
+              [pos.x, pos.y, pos.z],
+              cubeDim,
+              snakeConfig.colors.snakeBody,
+            )}
           />
         ))}
         {fruits.map((pos, i) => (
           <Fruit
             key={i}
-            fruitProps={makeFruitProps([pos.x, pos.y, pos.z], cubeDim)}
+            fruitProps={makeCubeProps(
+              [pos.x, pos.y, pos.z],
+              cubeDim,
+              snakeConfig.colors.fruit,
+            )}
           />
         ))}
         <OrbitControls
