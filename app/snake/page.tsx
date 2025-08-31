@@ -4,49 +4,20 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Mesh, Vector3 } from 'three';
 
-import { KeyState, Controls, initKeyState } from '@/app/components/Controls';
+import { KeyState, useGameControls } from '@/app/hooks/useGameControls';
+import { Controls } from '@/app/components/Controls';
 import { Head } from '@/app/components/snake/Head';
 import { Fruit } from '@/app/components/snake/Fruit';
 import { makeBoundaryProps, Boundary } from '@/app/components/snake/Boundary';
 import { BodyPart } from '@/app/components/snake/BodyPart';
-import {
-  isBoundaryHit,
-  getCollectedFruitSet,
-  breakpointSM,
-  isWindowDefined,
-} from '@/app/utils';
+import { isBoundaryHit, getCollectedFruitSet } from '@/app/utils';
 import { makeCubeProps } from '@/app/components/snake/Cube';
 import { snakeConfig } from '@/app/constants';
-
-function getConditionalSizes(): {
-  gameBoundarySize: number;
-  gameHalfBoundarySize: number;
-  cubeDim: number;
-} {
-  const ret = {
-    gameBoundarySize: 0,
-    gameHalfBoundarySize: 0,
-    cubeDim: 0,
-  };
-
-  // On screens larger than small breakpoint use larger sizes
-  // otherwise use smaller sizes.
-  if (isWindowDefined() && breakpointSM(window.innerWidth)) {
-    ret.gameBoundarySize = snakeConfig.boundarySize;
-    ret.cubeDim = snakeConfig.blockSize;
-  } else {
-    ret.gameBoundarySize = snakeConfig.boundarySize / 2;
-    ret.cubeDim = snakeConfig.blockSize * snakeConfig.cubeDimSmallMultiplier;
-  }
-
-  ret.gameHalfBoundarySize = ret.gameBoundarySize / 2;
-
-  return ret;
-}
+import { useResponsiveGameSizes } from '@/app/hooks/useResponsiveGameSizes';
 
 export default function Snake() {
   const { gameBoundarySize, gameHalfBoundarySize, cubeDim } =
-    getConditionalSizes();
+    useResponsiveGameSizes();
 
   // game state
   const [bodyParts, setBodyParts] = useState<Vector3[]>(
@@ -57,7 +28,6 @@ export default function Snake() {
   // rendering process. Therefore, useState may be more appropriate. https://react.dev/learn/referencing-values-with-refs#when-to-use-refs
   // This is tracked at https://github.com/NyaliaLui/twtw-games/issues/27.
   const headRef = useRef<Mesh | null>(snakeConfig.initHead);
-  const keysRef = useRef<KeyState>(initKeyState());
 
   const [fruits, setFruits] = useState<Vector3[]>(snakeConfig.initFruits);
   const [fruitCount, setFruitCount] = useState(snakeConfig.initFruitCount);
@@ -154,23 +124,24 @@ export default function Snake() {
     staminaTimerRef.current = null;
   }, [baseSpeed, staminaTimerRef]);
 
-  const handleKeyDown = useCallback(
-    (keys: KeyState) => {
-      if (keys.shift && staminaBlocks > 0) {
-        startBoost();
-      }
-    },
-    [staminaBlocks, startBoost],
-  );
-
-  const handleKeyUp = useCallback(
-    (keys: KeyState) => {
-      if (!keys.shift) {
-        stopBoost();
-      }
-    },
-    [stopBoost],
-  );
+  const { keys, handleKeyDown, handleKeyUp } = useGameControls({
+    onKeyDown: useCallback(
+      (keys: KeyState) => {
+        if (keys.shift && staminaBlocks > 0) {
+          startBoost();
+        }
+      },
+      [staminaBlocks, startBoost],
+    ),
+    onKeyUp: useCallback(
+      (keys: KeyState) => {
+        if (!keys.shift) {
+          stopBoost();
+        }
+      },
+      [stopBoost],
+    ),
+  });
 
   useEffect(() => {
     // initial placement
@@ -185,10 +156,10 @@ export default function Snake() {
       if (staminaBlocks === 0) stopBoost();
 
       const vel = new Vector3();
-      if (keysRef.current.w) vel.z -= speed;
-      if (keysRef.current.s) vel.z += speed;
-      if (keysRef.current.a) vel.x -= speed;
-      if (keysRef.current.d) vel.x += speed;
+      if (keys.w) vel.z -= speed;
+      if (keys.s) vel.z += speed;
+      if (keys.a) vel.x -= speed;
+      if (keys.d) vel.x += speed;
       headRef.current.position.add(vel);
 
       // boundary check
@@ -358,7 +329,7 @@ export default function Snake() {
 
       {/* Controls */}
       <Controls
-        keys={keysRef.current}
+        keys={keys}
         shiftLabel="BOOST"
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}

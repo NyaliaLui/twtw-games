@@ -1,26 +1,16 @@
 // app/animation/page.tsx
 'use client';
-import { useRef, useCallback, useReducer } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 
-import { KeyState, Controls, initKeyState } from '@/app/components/Controls';
+import { useGameControls } from '@/app/hooks/useGameControls';
+import { Controls } from '@/app/components/Controls';
 import { Soldier } from '@/app/components/animation/Soldier';
 import { World } from '@/app/components/animation/World';
 import { animationConfig } from '../constants';
 
 export default function Animation() {
-  const keysRef = useRef<KeyState>(initKeyState());
-  // Add state to force re-renders and address CSS Class change problem in https://github.com/NyaliaLui/twtw-games/issues/9.
-  // Forcing a re-render this way seems like a waste of memory. This is tracked at https://github.com/NyaliaLui/twtw-games/issues/26.
-  const [, forceUpdate] = useReducer((dummy) => !dummy, true);
-  const handleKeyDown = useCallback(() => {
-    forceUpdate();
-  }, []);
-
-  const handleKeyUp = useCallback(() => {
-    forceUpdate();
-  }, []);
+  const { keys, handleKeyDown, handleKeyUp } = useGameControls();
 
   return (
     <div className="fixed inset-0 bg-black z-40">
@@ -38,7 +28,7 @@ export default function Animation() {
           intensity={animationConfig.directionalLight.intensity}
         />
 
-        <Soldier keys={keysRef.current} gltfPath="/models/Soldier.glb" />
+        <Soldier keys={keys} gltfPath="/models/Soldier.glb" />
         <World />
 
         <OrbitControls
@@ -49,7 +39,7 @@ export default function Animation() {
 
       {/* Controls */}
       <Controls
-        keys={keysRef.current}
+        keys={keys}
         shiftLabel="RUN"
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}

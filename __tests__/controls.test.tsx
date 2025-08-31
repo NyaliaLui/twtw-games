@@ -1,7 +1,9 @@
 import React from 'react';
 import { expect } from '@jest/globals';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { Controls, KeyState } from '@/app/components/Controls';
+
+import { KeyState } from '@/app/hooks/useGameControls';
+import { Controls } from '@/app/components/Controls';
 
 // Mock the KeyState for testing
 const createMockKeyState = (): KeyState => ({

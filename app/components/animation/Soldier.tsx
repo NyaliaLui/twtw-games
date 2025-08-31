@@ -4,7 +4,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import { Group, AnimationAction, Vector3 } from 'three';
 
-import { KeyState } from '@/app/components/Controls';
+import { KeyState } from '@/app/hooks/useGameControls';
 import { breakpointSM } from '@/app/utils';
 import { animationConfig } from '@/app/constants';
 

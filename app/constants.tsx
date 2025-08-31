@@ -41,7 +41,7 @@ const snakeConfig = {
   },
   cubeDimSmallMultiplier: 0.75,
   origin: new Vector3(0, 0, 0),
-  initSpeed: 5,
+  initSpeed: 4,
   initStaminaBlocks: 0,
   initFruitCount: 1,
   initScore: 0,
