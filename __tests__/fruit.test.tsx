@@ -12,13 +12,18 @@ import {
   makeSnakeHeadProps,
 } from './utils/snake';
 import { Head } from '@/app/components/snake/Head';
-import {
-  FruitProps,
-  makeFruitProps,
-  Fruit,
-} from '@/app/components/snake/Fruit';
+import { Fruit } from '@/app/components/snake/Fruit';
 import { getCollectedFruitSet } from '@/app/utils';
 import { snakeConfig } from '@/app/constants';
+import { makeCubeProps, CubeProps } from '@/app/components/snake/Cube';
+
+function makeFruitProps(position: [number, number, number]): CubeProps {
+  return makeCubeProps(
+    position,
+    snakeConfig.blockSize,
+    snakeConfig.colors.fruit,
+  );
+}
 
 describe('Test Snake fruit', () => {
   it('Renders fruit', async () => {
@@ -32,8 +37,8 @@ describe('Test Snake fruit', () => {
       material: ChildrenType,
       props: TestProps,
     ) => {
-      let fruitProps = props as FruitProps;
-      expect(geometry.props.args).toEqual(new Array(3).fill(fruitProps.dim));
+      let fruitProps = props as CubeProps;
+      expect(geometry.props.args).toEqual(fruitProps.dims);
     };
 
     checkBoxMesh(renderer, fruitProps, specificFruitProps);
@@ -69,7 +74,7 @@ describe('Test Snake fruit', () => {
     };
 
     // This should not happen, but if it does, there is something terribly wrong.
-    if (!headProps.ref.current) fail('HeadProps reference is null');
+    if (!headProps.ref?.current) fail('HeadProps reference is null');
 
     // Fruit collision occurs
     checkFruitCollision(testFruits, headProps.ref.current, 1, true);

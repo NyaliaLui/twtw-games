@@ -4,58 +4,30 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Mesh, Vector3 } from 'three';
 
-import { KeyState, Controls, initKeyState } from '@/app/components/Controls';
-import { makeHeadProps, Head } from '@/app/components/snake/Head';
-import { makeFruitProps, Fruit } from '@/app/components/snake/Fruit';
+import { KeyState, useGameControls } from '@/app/hooks/useGameControls';
+import { Controls } from '@/app/components/Controls';
+import { Head } from '@/app/components/snake/Head';
+import { Fruit } from '@/app/components/snake/Fruit';
 import { makeBoundaryProps, Boundary } from '@/app/components/snake/Boundary';
-import { makeBodyProps, BodyPart } from '@/app/components/snake/BodyPart';
-import {
-  isBoundaryHit,
-  getCollectedFruitSet,
-  breakpointSM,
-  isWindowDefined,
-} from '@/app/utils';
+import { BodyPart } from '@/app/components/snake/BodyPart';
+import { isBoundaryHit, getCollectedFruitSet } from '@/app/utils';
+import { makeCubeProps } from '@/app/components/snake/Cube';
 import { snakeConfig } from '@/app/constants';
-
-function getConditionalSizes(): {
-  gameBoundarySize: number;
-  gameHalfBoundarySize: number;
-  cubeDim: number;
-} {
-  const ret = {
-    gameBoundarySize: 0,
-    gameHalfBoundarySize: 0,
-    cubeDim: 0,
-  };
-
-  // On screens larger than small breakpoint use larger sizes
-  // otherwise use smaller sizes.
-  if (isWindowDefined() && breakpointSM(window.innerWidth)) {
-    ret.gameBoundarySize = snakeConfig.boundarySize;
-    ret.cubeDim = snakeConfig.blockSize;
-  } else {
-    ret.gameBoundarySize = snakeConfig.boundarySize / 2;
-    ret.cubeDim = snakeConfig.blockSize * snakeConfig.cubeDimSmallMultiplier;
-  }
-
-  ret.gameHalfBoundarySize = ret.gameBoundarySize / 2;
-
-  return ret;
-}
+import { useResponsiveGameSizes } from '@/app/hooks/useResponsiveGameSizes';
 
 export default function Snake() {
   const { gameBoundarySize, gameHalfBoundarySize, cubeDim } =
-    getConditionalSizes();
+    useResponsiveGameSizes();
 
   // game state
   const [bodyParts, setBodyParts] = useState<Vector3[]>(
     snakeConfig.initBodyParts,
-  ); // array of Vector3
-  // TODO(@NyaliaLui): Re-examine head. According to React Docs, it may not be a suitable
-  // candidate for a ref object because I believe the head (and body) are always changed during the
+  );
+  // Re-examine head. According to React docs, it may not be a suitable
+  // candidate for a ref object because the head (and body) are always changed during the
   // rendering process. Therefore, useState may be more appropriate. https://react.dev/learn/referencing-values-with-refs#when-to-use-refs
+  // This is tracked at https://github.com/NyaliaLui/twtw-games/issues/27.
   const headRef = useRef<Mesh | null>(snakeConfig.initHead);
-  const keysRef = useRef<KeyState>(initKeyState());
 
   const [fruits, setFruits] = useState<Vector3[]>(snakeConfig.initFruits);
   const [fruitCount, setFruitCount] = useState(snakeConfig.initFruitCount);
@@ -152,23 +124,24 @@ export default function Snake() {
     staminaTimerRef.current = null;
   }, [baseSpeed, staminaTimerRef]);
 
-  const handleKeyDown = useCallback(
-    (keys: KeyState) => {
-      if (keys.shift && staminaBlocks > 0) {
-        startBoost();
-      }
-    },
-    [staminaBlocks, startBoost],
-  );
-
-  const handleKeyUp = useCallback(
-    (keys: KeyState) => {
-      if (!keys.shift) {
-        stopBoost();
-      }
-    },
-    [stopBoost],
-  );
+  const { keys, handleKeyDown, handleKeyUp } = useGameControls({
+    onKeyDown: useCallback(
+      (keys: KeyState) => {
+        if (keys.shift && staminaBlocks > 0) {
+          startBoost();
+        }
+      },
+      [staminaBlocks, startBoost],
+    ),
+    onKeyUp: useCallback(
+      (keys: KeyState) => {
+        if (!keys.shift) {
+          stopBoost();
+        }
+      },
+      [stopBoost],
+    ),
+  });
 
   useEffect(() => {
     // initial placement
@@ -183,10 +156,10 @@ export default function Snake() {
       if (staminaBlocks === 0) stopBoost();
 
       const vel = new Vector3();
-      if (keysRef.current.w) vel.z -= speed;
-      if (keysRef.current.s) vel.z += speed;
-      if (keysRef.current.a) vel.x -= speed;
-      if (keysRef.current.d) vel.x += speed;
+      if (keys.w) vel.z -= speed;
+      if (keys.s) vel.z += speed;
+      if (keys.a) vel.x -= speed;
+      if (keys.d) vel.x += speed;
       headRef.current.position.add(vel);
 
       // boundary check
@@ -245,8 +218,9 @@ export default function Snake() {
         // know when the next frame will load.
         if ((level + 1) % snakeConfig.levelsToIncrementFruit === 0) {
           setFruitCount((fc) => fc + snakeConfig.incrementFruitCount);
-          // TODO(@NyaliaLui): This is a hack for spawing the correct amount of fruits
-          // between frames. Please clean this up.
+          // This is a hack for spawing the correct amount of fruits
+          // between frames. Please look into an alternative.
+          // This is tracked at https://github.com/NyaliaLui/twtw-games/issues/28.
           spawnFruits(fruitCount + snakeConfig.incrementFruitCount);
         } else {
           spawnFruits();
@@ -256,6 +230,7 @@ export default function Snake() {
         setBaseSpeed((bs) => bs + snakeConfig.incrementBaseSpeed);
         // Add to the current frame's base speed so we don't have
         // to wait for the next frame.
+        // This is tracked at https://github.com/NyaliaLui/twtw-games/issues/28.
         const nb = baseSpeed + snakeConfig.incrementBaseSpeed;
         setSpeed(isBoosting ? nb * snakeConfig.boostMultiplier : nb);
         setMaxScore((ms) => ms + snakeConfig.initMaxScore);
@@ -317,22 +292,31 @@ export default function Snake() {
           )}
         />
         <Head
-          headProps={makeHeadProps(
-            headRef,
+          headProps={makeCubeProps(
             [snakeConfig.origin.x, snakeConfig.origin.y, snakeConfig.origin.z],
             cubeDim,
+            snakeConfig.colors.snakeHead,
+            headRef,
           )}
         />
         {bodyParts.map((pos, i) => (
           <BodyPart
             key={i}
-            bodyProps={makeBodyProps([pos.x, pos.y, pos.z], cubeDim)}
+            bodyProps={makeCubeProps(
+              [pos.x, pos.y, pos.z],
+              cubeDim,
+              snakeConfig.colors.snakeBody,
+            )}
           />
         ))}
         {fruits.map((pos, i) => (
           <Fruit
             key={i}
-            fruitProps={makeFruitProps([pos.x, pos.y, pos.z], cubeDim)}
+            fruitProps={makeCubeProps(
+              [pos.x, pos.y, pos.z],
+              cubeDim,
+              snakeConfig.colors.fruit,
+            )}
           />
         ))}
         <OrbitControls
@@ -345,7 +329,7 @@ export default function Snake() {
 
       {/* Controls */}
       <Controls
-        keys={keysRef.current}
+        keys={keys}
         shiftLabel="BOOST"
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}

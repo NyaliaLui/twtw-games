@@ -1,28 +1,14 @@
 'use client';
 import { useEffect, useCallback } from 'react';
+import { KeyState, KeyHandlerFn } from '@/app/hooks/useGameControls';
 
-export type { KeyState, KeyHandlerFn };
-export { Controls, initKeyState };
-
-interface KeyState {
-  w: boolean;
-  a: boolean;
-  s: boolean;
-  d: boolean;
-  shift: boolean;
-}
-
-type KeyHandlerFn = (keys: KeyState) => void;
+export { Controls };
 
 interface ControlsProps {
   keys: KeyState;
   shiftLabel: string;
   onKeyDown: KeyHandlerFn;
   onKeyUp: KeyHandlerFn;
-}
-
-function initKeyState(): KeyState {
-  return { w: false, a: false, s: false, d: false, shift: false };
 }
 
 function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps) {

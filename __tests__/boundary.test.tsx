@@ -35,7 +35,7 @@ describe('Test Snake boundaries', () => {
       props: TestProps,
     ) => {
       let boundProps = props as BoundaryProps;
-      expect(geometry.props.args).toEqual(boundProps.bounds);
+      expect(geometry.props.args).toEqual(boundProps.dims);
       expect(material.props.wireframe).toBe(boundProps.isWireframe);
       expect(material.props.side).toEqual(boundProps.side);
     };
@@ -62,7 +62,7 @@ describe('Test Snake boundaries', () => {
     };
 
     // This should not happen, but if it does, there is something terribly wrong.
-    if (!headProps.ref.current) fail('HeadProps reference is null');
+    if (!headProps.ref?.current) fail('HeadProps reference is null');
 
     // No boundary is hit
     checkBoundary(headProps.ref.current, headProps.ref.current.position, false);

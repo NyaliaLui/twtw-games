@@ -10,7 +10,8 @@ import {
   checkBoxMesh,
   makeSnakeHeadProps,
 } from './utils/snake';
-import { HeadProps, Head } from '@/app/components/snake/Head';
+import { Head } from '@/app/components/snake/Head';
+import { CubeProps } from '@/app/components/snake/Cube';
 
 describe('Test Snake head', () => {
   it('Renders snake head', async () => {
@@ -24,9 +25,9 @@ describe('Test Snake head', () => {
       material: ChildrenType,
       props: TestProps,
     ) => {
-      let headProps = props as HeadProps;
-      expect(headProps.ref.current).toEqual(mockRef.current);
-      expect(geometry.props.args).toEqual(new Array(3).fill(headProps.dim));
+      let headProps = props as CubeProps;
+      expect(headProps.ref?.current).toEqual(mockRef.current);
+      expect(geometry.props.args).toEqual(headProps.dims);
     };
 
     checkBoxMesh(renderer, headProps, checkHeadProps);
