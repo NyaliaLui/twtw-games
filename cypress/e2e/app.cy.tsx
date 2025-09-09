@@ -48,15 +48,27 @@ describe('Root Navigation Checks', () => {
     // Check for exactly three <p> elements
     cy.get('p').should('have.length', 3);
 
+    // Check for the Snake link
+    cy.get('a[href="/snake"]').should('exist').contains('Snake');
+
+    // Check for Animation link
+    cy.get('a[href="/animation"]')
+      .should('exist')
+      .contains('Animation Challenge');
+
+    // Check for the Animation link
+
     // Check for the Facebook link
     cy.get('a[href="https://www.facebook.com/cityoftopeka"]')
       .should('exist')
-      .and('have.attr', 'target', '_blank');
+      .and('have.attr', 'target', '_blank')
+      .contains('City of Topeka');
 
     // Check for the Instagram link
     cy.get('a[href="https://www.instagram.com/cityoftopeka/"]')
       .should('exist')
-      .and('have.attr', 'target', '_blank');
+      .and('have.attr', 'target', '_blank')
+      .contains('City of Topeka');
 
     // Check for one HR
     cy.get('hr').should('have.length', 1);
