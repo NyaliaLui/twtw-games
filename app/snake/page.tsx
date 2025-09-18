@@ -1,11 +1,12 @@
 'use client';
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { Mesh, Vector3 } from 'three';
 
 import { KeyState, useGameControls } from '@/app/hooks/useGameControls';
 import { Controls } from '@/app/components/Controls';
+import { LoadingScreen } from '@/app/components/LoadingScreen';
 import { Head } from '@/app/components/snake/Head';
 import { Fruit } from '@/app/components/snake/Fruit';
 import { makeBoundaryProps, Boundary } from '@/app/components/snake/Boundary';
@@ -285,46 +286,56 @@ export default function Snake() {
         }}
         onCreated={snakeConfig.onCreated}
       >
-        <Boundary
-          boundProps={makeBoundaryProps(
-            [snakeConfig.origin.x, snakeConfig.origin.y, snakeConfig.origin.z],
-            [gameBoundarySize, 0.1, gameBoundarySize],
-          )}
-        />
-        <Head
-          headProps={makeCubeProps(
-            [snakeConfig.origin.x, snakeConfig.origin.y, snakeConfig.origin.z],
-            cubeDim,
-            snakeConfig.colors.snakeHead,
-            headRef,
-          )}
-        />
-        {bodyParts.map((pos, i) => (
-          <BodyPart
-            key={i}
-            bodyProps={makeCubeProps(
-              [pos.x, pos.y, pos.z],
-              cubeDim,
-              snakeConfig.colors.snakeBody,
+        <Suspense fallback={<LoadingScreen />}>
+          <Boundary
+            boundProps={makeBoundaryProps(
+              [
+                snakeConfig.origin.x,
+                snakeConfig.origin.y,
+                snakeConfig.origin.z,
+              ],
+              [gameBoundarySize, 0.1, gameBoundarySize],
             )}
           />
-        ))}
-        {fruits.map((pos, i) => (
-          <Fruit
-            key={i}
-            fruitProps={makeCubeProps(
-              [pos.x, pos.y, pos.z],
+          <Head
+            headProps={makeCubeProps(
+              [
+                snakeConfig.origin.x,
+                snakeConfig.origin.y,
+                snakeConfig.origin.z,
+              ],
               cubeDim,
-              snakeConfig.colors.fruit,
+              snakeConfig.colors.snakeHead,
+              headRef,
             )}
           />
-        ))}
-        <OrbitControls
-          enableRotate={snakeConfig.orbitControls.enableRotate}
-          enablePan={snakeConfig.orbitControls.enablePan}
-          enableZoom={snakeConfig.orbitControls.enableZoom}
-        />
-        <SceneUpdater />
+          {bodyParts.map((pos, i) => (
+            <BodyPart
+              key={i}
+              bodyProps={makeCubeProps(
+                [pos.x, pos.y, pos.z],
+                cubeDim,
+                snakeConfig.colors.snakeBody,
+              )}
+            />
+          ))}
+          {fruits.map((pos, i) => (
+            <Fruit
+              key={i}
+              fruitProps={makeCubeProps(
+                [pos.x, pos.y, pos.z],
+                cubeDim,
+                snakeConfig.colors.fruit,
+              )}
+            />
+          ))}
+          <OrbitControls
+            enableRotate={snakeConfig.orbitControls.enableRotate}
+            enablePan={snakeConfig.orbitControls.enablePan}
+            enableZoom={snakeConfig.orbitControls.enableZoom}
+          />
+          <SceneUpdater />
+        </Suspense>
       </Canvas>
 
       {/* Controls */}
