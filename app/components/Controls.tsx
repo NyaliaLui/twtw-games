@@ -66,14 +66,14 @@ function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps) {
   }, [keys, setKey, unsetKey]);
 
   const dpadButtonClass =
-    'w-10 h-10 bg-gray-700 hover:bg-gray-600 active:bg-gray-500 border border-gray-500 rounded flex items-center justify-center text-white font-bold text-sm select-none transition-colors duration-75';
+    'w-10 h-10 bg-gray-700 hover:bg-gray-600 active:bg-gray-500 border border-gray-500 rounded flex items-center justify-center text-white text-sm select-none transition-colors duration-75';
   const dpadActiveButtonClass =
-    'w-10 h-10 bg-gray-500 border border-gray-400 rounded flex items-center justify-center text-white font-bold text-sm select-none';
+    'w-10 h-10 bg-gray-500 border border-gray-400 rounded flex items-center justify-center text-white text-sm select-none';
 
   const shiftButtonClass =
-    'w-15 h-15 bg-red-700 hover:bg-red-600 active:bg-red-500 border-2 border-red-500 rounded-lg flex flex-col items-center justify-center text-white font-bold text-sm select-none transition-colors duration-75 shadow-lg';
+    'w-17 h-15 bg-red-700 hover:bg-red-600 active:bg-red-500 border-2 border-red-500 rounded-lg flex flex-col items-center justify-center text-white text-sm select-none transition-colors duration-75 shadow-lg';
   const shiftActiveButtonClass =
-    'w-15 h-15 bg-red-500 border-2 border-red-400 rounded-lg flex flex-col items-center justify-center text-white font-bold text-sm select-none shadow-lg';
+    'w-17 h-15 bg-red-500 border-2 border-red-400 rounded-lg flex flex-col items-center justify-center text-white text-sm select-none shadow-lg';
 
   const toggleDPadClass = (k: boolean) => {
     return k ? dpadActiveButtonClass : dpadButtonClass;
@@ -154,7 +154,10 @@ function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps) {
           onTouchEnd={(e) => touchEnd(e, 'shift')}
           aria-label={`${shiftLabel}`}
         >
-          <div className="leading-tight">{shiftLabel}</div>
+          <div className="flex flex-col items-center">
+            <span>Shift to</span>
+            <span>{shiftLabel}</span>
+          </div>
         </button>
       </div>
     </>
