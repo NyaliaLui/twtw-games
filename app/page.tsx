@@ -1,5 +1,8 @@
 import { HRTrimmed } from 'flowbite-react';
+import Image from 'next/image';
 import Link from 'next/link';
+
+import CreatorImage from '@/public/creator.jpg';
 
 export default function Home() {
   return (
@@ -7,6 +10,19 @@ export default function Home() {
       <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
         About this project
       </h1>
+      {/* Creator image */}
+      <div className="mb-2 flex justify-center">
+        <div className="max-w-sm mx-auto">
+          <Image
+            src={CreatorImage}
+            className="rounded-lg shadow-lg w-full h-auto"
+            alt="Brody Hall, the creator of this project"
+          />
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Brody Hall, Software Developer Intern
+          </p>
+        </div>
+      </div>
       <p className="mb-8 text-lg font-normal text-gray-600 lg:text-xl sm:px-16 lg:px-48 dark:text-gray-400 text-justify">
         In the summer of 2025, Brody Hall interned with Omni Circle Group and
         Nyalia&apos;s Software Solutions. His assignment was to develop a game
@@ -20,7 +36,7 @@ export default function Home() {
           className="w-full sm:w-64 inline-flex items-center justify-center px-6 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-600 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900 transition-colors duration-200"
         >
           <span className="mr-2">🐍</span>
-          Play Snake
+          Snake
         </Link>
         <Link
           href="/animation"
