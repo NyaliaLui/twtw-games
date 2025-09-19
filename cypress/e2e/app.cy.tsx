@@ -45,8 +45,13 @@ describe('Root Navigation Checks', () => {
     // Check for <h1>
     cy.get('h1').should('exist');
 
-    // Check for exactly three <p> elements
-    cy.get('p').should('have.length', 3);
+    // Check for creator image
+    cy.get('img[alt="Brody Hall, the creator of this project"]').should(
+      'exist',
+    );
+
+    // Check for exactly four <p> elements
+    cy.get('p').should('have.length', 4);
 
     // Check for the Snake link
     cy.get('a[href="/snake"]').should('exist').contains('Snake');

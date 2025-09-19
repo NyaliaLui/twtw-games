@@ -54,7 +54,7 @@ export default function ConditionalLayout({
   return (
     <>
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 border-b border-gray-200 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+      <nav className="sticky top-0 z-50 border-b border-gray-300 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <Link
             href="/"
@@ -72,7 +72,7 @@ export default function ConditionalLayout({
           <button
             data-collapse-toggle="navbar-hamburger"
             type="button"
-            className="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            className="inline-flex items-center justify-center p-2 w-10 h-10 text-sm text-gray-600 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
             aria-controls="navbar-hamburger"
             aria-expanded="false"
             onClick={(e) => {
@@ -106,7 +106,7 @@ export default function ConditionalLayout({
 
           {/* Mobile menu - positioned absolutely to overlay content */}
           <div
-            className="hidden absolute top-full left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-lg"
+            className="hidden absolute top-full left-0 right-0 z-40 bg-gray-50 dark:bg-gray-800 border-t border-gray-300 dark:border-gray-700 shadow-lg"
             id="navbar-hamburger"
           >
             <ul className="flex flex-col font-medium p-4 space-y-2">
@@ -137,10 +137,10 @@ export default function ConditionalLayout({
       <main>{children}</main>
 
       {/* Footer - not sticky, positioned normally at bottom */}
-      <footer className="w-full bg-white border-t border-gray-200 shadow-sm md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
+      <footer className="w-full bg-gray-50 border-t border-gray-300 shadow-sm md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-700">
         <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
           <div className="sm:flex sm:items-center sm:justify-between">
-            <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+            <span className="text-sm text-gray-600 sm:text-center dark:text-gray-400">
               © 2025{' '}
               <Link
                 href="https://www.nyaliasoftware.solutions/"
@@ -153,7 +153,7 @@ export default function ConditionalLayout({
             <div className="flex mt-4 sm:justify-center sm:mt-0">
               <Link
                 href="https://www.facebook.com/cityoftopeka"
-                className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
+                className="text-gray-600 hover:text-gray-900 dark:hover:text-white"
               >
                 <svg
                   className="w-4 h-4"
@@ -172,7 +172,7 @@ export default function ConditionalLayout({
               </Link>
               <Link
                 href="https://www.instagram.com/cityoftopeka/"
-                className="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5"
+                className="text-gray-600 hover:text-gray-900 dark:hover:text-white ms-5"
               >
                 <svg
                   className="w-4 h-4"
@@ -190,7 +190,7 @@ export default function ConditionalLayout({
               </Link>
               <Link
                 href="https://github.com/NyaliaLui/twtw-games"
-                className="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5"
+                className="text-gray-600 hover:text-gray-900 dark:hover:text-white ms-5"
               >
                 <svg
                   className="w-4 h-4"
