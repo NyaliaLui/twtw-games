@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-[#1e2939]">
+      <body className="bg-gray-50 dark:bg-gray-800">
         <ConditionalLayout>{children}</ConditionalLayout>
         <Script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></Script>
       </body>
