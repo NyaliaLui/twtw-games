@@ -2,7 +2,7 @@
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 
 import LogoImage from '@/public/TWTWLogo.png';
 import { rootConfig } from '@/app/constants';
@@ -12,6 +12,9 @@ export default function ConditionalLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
+
   const hideHamburger = useCallback(
     () => document.getElementById('navbar-hamburger')?.classList.add('hidden'),
     [],
@@ -22,30 +25,247 @@ export default function ConditionalLayout({
   const hideLayoutPages = ['/snake', '/animation'];
   const shouldHideLayout = hideLayoutPages.includes(pathname);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const dropdown = document.getElementById('game-dropdown');
+      const button = document.getElementById('dropdown-button');
+      if (
+        dropdown &&
+        button &&
+        !dropdown.contains(event.target as Node) &&
+        !button.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+
+  // Auto-show help modal when navigating to game pages
+  useEffect(() => {
+    if (pathname === '/snake' || pathname === '/animation') {
+      setIsHelpModalOpen(true);
+    }
+  }, [pathname]);
+
+  // Get help content based on current page
+  const getHelpContent = () => {
+    switch (pathname) {
+      case '/snake':
+        return {
+          title: 'How to play',
+          content: (
+            <div className="space-y-4">
+              <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
+                <li>
+                  Eat red fruits to grow the snake and increase your score.
+                </li>
+                <li>
+                  You level up when you reach the max score and higher levels =
+                  faster base speed.
+                </li>
+                <li>Gain 1 stamina block for every 5 fruit you eat.</li>
+                <li>The vertical bar shows the amount of stamina.</li>
+                <li>
+                  Use the <strong>WASD</strong> buttons to move.
+                </li>
+                <li>
+                  Use the <strong>Shift</strong> or <strong>BOOST</strong>{' '}
+                  button to speed up (consumes stamina).
+                </li>
+                <li>Avoid hitting the boundaries or the game will reset!</li>
+              </ul>
+            </div>
+          ),
+        };
+      case '/animation':
+        return {
+          title: 'How to play',
+          content: (
+            <div className="space-y-4">
+              <div>
+                <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
+                  <li>
+                    This project was an exercise on 3D animation, GLTF files,
+                    and creating worlds with textures.
+                  </li>
+                  <li>
+                    Watch the soldier's animations change between idle, walk,
+                    and run.
+                  </li>
+                  <li>
+                    Use the <strong>WASD</strong> buttons to move.
+                  </li>
+                  <li>
+                    Hold the <strong>Shift</strong> or <strong>RUN</strong>{' '}
+                    button to speed up.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          ),
+        };
+      default:
+        return {
+          title: 'Help',
+          content: (
+            <p className="text-gray-700 dark:text-gray-300">
+              No help available for this page.
+            </p>
+          ),
+        };
+    }
+  };
+
+  const helpContent = getHelpContent();
+
   if (shouldHideLayout) {
     return (
       <>
-        <Link
-          href="/"
-          className="fixed top-2 lg:top-4 left-4 z-50 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
-          aria-label="Exit to Main Menu"
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+        {/* Dropdown Menu */}
+        <div className="fixed top-2 lg:top-4 left-4 z-50">
+          <button
+            id="dropdown-button"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors duration-200"
+            aria-label="Game Menu"
+            aria-expanded={isDropdownOpen}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={rootConfig.strokeWidth}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          <span className="text-xs sm:text-sm">Exit</span>
-        </Link>
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={rootConfig.strokeWidth}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+            <span className="text-xs sm:text-sm">Menu</span>
+            <svg
+              className={`w-3 h-3 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          {/* Dropdown Content */}
+          {isDropdownOpen && (
+            <div
+              id="game-dropdown"
+              className="absolute top-full left-0 mt-2 w-48 bg-gray-800 border border-gray-600 rounded-lg shadow-lg overflow-hidden"
+            >
+              <button
+                onClick={() => {
+                  setIsHelpModalOpen(true);
+                  setIsDropdownOpen(false);
+                }}
+                className="w-full px-4 py-3 text-left text-white hover:bg-gray-700 transition-colors duration-200 flex items-center space-x-2"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span className="text-sm">Help</span>
+              </button>
+              <Link
+                href="/"
+                className="w-full px-4 py-3 text-left text-white hover:bg-gray-700 transition-colors duration-200 flex items-center space-x-2"
+                onClick={() => setIsDropdownOpen(false)}
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={rootConfig.strokeWidth}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                <span className="text-sm">Quit</span>
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Help Modal */}
+        {isHelpModalOpen && (
+          <div className="fixed inset-0 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-96 overflow-y-auto">
+              <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {helpContent.title}
+                </h3>
+                <button
+                  onClick={() => setIsHelpModalOpen(false)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                  aria-label="Close help"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <div className="p-6">{helpContent.content}</div>
+              <div className="flex justify-center p-6 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={() => setIsHelpModalOpen(false)}
+                  className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors duration-200"
+                  data-testid="close-help-modal"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {children}
       </>
     );

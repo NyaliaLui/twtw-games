@@ -1,10 +1,11 @@
 import { expect } from 'chai';
 
-import { makeAriaQuery } from './e2eutils';
+import { makeAriaQuery, closeHelpModal } from './e2eutils';
 
 describe('Snake Page', () => {
   beforeEach(() => {
     cy.visit('/snake');
+    closeHelpModal();
   });
 
   it('should render the HUD correctly', () => {

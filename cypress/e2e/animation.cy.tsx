@@ -1,8 +1,9 @@
-import { makeAriaQuery } from './e2eutils';
+import { makeAriaQuery, closeHelpModal } from './e2eutils';
 
 describe('Animation Page', () => {
   beforeEach(() => {
     cy.visit('/animation');
+    closeHelpModal();
   });
 
   it('should render the HUD correctly', () => {

@@ -86,6 +86,7 @@ const animationConfig = {
   orbitControls: {
     enableRotate: false,
     target: new Vector3(0, 1, 0),
+    enableZoom: false,
   },
   moveUnit: 1,
   groundDim: 100,

@@ -36,6 +36,7 @@ export default function Animation() {
           <OrbitControls
             enableRotate={animationConfig.orbitControls.enableRotate}
             target={animationConfig.orbitControls.target}
+            enableZoom={animationConfig.orbitControls.enableZoom}
           />
         </Suspense>
       </Canvas>
