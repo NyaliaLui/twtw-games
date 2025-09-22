@@ -28,6 +28,11 @@ describe('Snake Page', () => {
       .then((text) => {
         expect(text).to.match(/Level: \d/);
       });
+    cy.get('div#reset-win')
+      .invoke('text')
+      .then((text) => {
+        expect(text).to.equal('Game Reset. Avoid boundaries!');
+      });
     cy.get('div#stamina').should('exist');
     cy.get(makeAriaQuery('Move Up (W)')).should('exist');
     cy.get(makeAriaQuery('Move Left (A)')).should('exist');
