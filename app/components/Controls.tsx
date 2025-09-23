@@ -1,14 +1,169 @@
 'use client';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { KeyState, KeyHandlerFn } from '@/app/hooks/useGameControls';
 
-export { Controls };
+export { AnalogStick, Controls };
 
 interface ControlsProps {
   keys: KeyState;
   shiftLabel: string;
   onKeyDown: KeyHandlerFn;
   onKeyUp: KeyHandlerFn;
+}
+
+interface AnalogStickProps {
+  onMove: (keys: KeyState) => void;
+  keys: KeyState;
+}
+
+function AnalogStick({ onMove, keys }: AnalogStickProps) {
+  const stickRef = useRef<HTMLDivElement>(null);
+  const knobRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [knobPosition, setKnobPosition] = useState({ x: 0, y: 0 });
+  
+  const stickRadius = 40; // Total stick area radius
+  const knobRadius = 12; // Knob radius
+  const deadZone = 0.1; // Dead zone threshold (0-1)
+
+  const handleStart = useCallback((clientX: number, clientY: number) => {
+    setIsDragging(true);
+    updatePosition(clientX, clientY);
+  }, []);
+
+  const handleMove = useCallback((clientX: number, clientY: number) => {
+    if (!isDragging) return;
+    updatePosition(clientX, clientY);
+  }, [isDragging]);
+
+  const handleEnd = useCallback(() => {
+    setIsDragging(false);
+    setKnobPosition({ x: 0, y: 0 });
+    
+    // Reset all movement keys
+    const newKeys = { ...keys };
+    newKeys.w = false;
+    newKeys.a = false;
+    newKeys.s = false;
+    newKeys.d = false;
+    onMove(newKeys);
+  }, [keys, onMove]);
+
+  const updatePosition = useCallback((clientX: number, clientY: number) => {
+    if (!stickRef.current) return;
+
+    const stickRect = stickRef.current.getBoundingClientRect();
+    const stickCenterX = stickRect.left + stickRect.width / 2;
+    const stickCenterY = stickRect.top + stickRect.height / 2;
+
+    const deltaX = clientX - stickCenterX;
+    const deltaY = clientY - stickCenterY;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    // Limit knob to stick boundary
+    const maxDistance = stickRadius - knobRadius;
+    const clampedDistance = Math.min(distance, maxDistance);
+    
+    let x = 0, y = 0;
+    if (distance > 0) {
+      x = (deltaX / distance) * clampedDistance;
+      y = (deltaY / distance) * clampedDistance;
+    }
+
+    setKnobPosition({ x, y });
+
+    // Convert to key states
+    const normalizedX = x / maxDistance;
+    const normalizedY = y / maxDistance;
+
+    const newKeys = { ...keys };
+    newKeys.w = normalizedY < -deadZone;
+    newKeys.s = normalizedY > deadZone;
+    newKeys.a = normalizedX < -deadZone;
+    newKeys.d = normalizedX > deadZone;
+
+    onMove(newKeys);
+  }, [keys, onMove, stickRadius, knobRadius, deadZone]);
+
+  // Mouse events
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    handleStart(e.clientX, e.clientY);
+  }, [handleStart]);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    handleMove(e.clientX, e.clientY);
+  }, [handleMove]);
+
+  const handleMouseUp = useCallback(() => {
+    handleEnd();
+  }, [handleEnd]);
+
+  // Touch events
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleStart(touch.clientX, touch.clientY);
+  }, [handleStart]);
+
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleMove(touch.clientX, touch.clientY);
+  }, [handleMove]);
+
+  const handleTouchEnd = useCallback((e: TouchEvent) => {
+    e.preventDefault();
+    handleEnd();
+  }, [handleEnd]);
+
+  // Event listeners
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd, { passive: false });
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchmove', handleTouchMove);
+        document.removeEventListener('touchend', handleTouchEnd);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
+
+  return (
+    <div
+      className="relative"
+      aria-label="Move with the analog stick or WASD keys"
+      data-testid="analog-stick"
+    >
+      {/* Stick Base */}
+      <div
+        ref={stickRef}
+        className="relative w-20 h-20 bg-gray-700 bg-opacity-80 border-2 border-gray-500 rounded-full flex items-center justify-center cursor-pointer select-none"
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+      >
+        {/* Stick Knob */}
+        <div
+          ref={knobRef}
+          className="absolute w-6 h-6 bg-gray-300 border-2 border-gray-400 rounded-full transition-all duration-75 shadow-lg"
+          style={{
+            transform: `translate(${knobPosition.x}px, ${knobPosition.y}px)`,
+            backgroundColor: isDragging ? '#e5e7eb' : '#d1d5db'
+          }}
+        />
+        
+        {/* Center dot indicator */}
+        {!isDragging && (
+          <div className="absolute w-2 h-2 bg-gray-400 rounded-full opacity-50" />
+        )}
+      </div>
+    </div>
+  );
 }
 
 function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps) {
@@ -32,9 +187,27 @@ function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps) {
     [keys, onKeyUp],
   );
 
+  const handleAnalogMove = useCallback(
+    (newKeys: KeyState) => {
+      // Check for key changes and trigger appropriate handlers
+      Object.keys(newKeys).forEach((keyName) => {
+        const key = keyName as keyof KeyState;
+        if (key !== 'shift') { // Don't affect shift key
+          if (newKeys[key] && !keys[key]) {
+            keys[key] = true;
+            onKeyDown(keys);
+          } else if (!newKeys[key] && keys[key]) {
+            keys[key] = false;
+            onKeyUp(keys);
+          }
+        }
+      });
+    },
+    [keys, onKeyDown, onKeyUp]
+  );
+
   const touchStart = useCallback(
     (e: React.TouchEvent, key: keyof KeyState) => {
-      // e.preventDefault();
       setKey(key);
     },
     [setKey],
@@ -42,7 +215,6 @@ function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps) {
 
   const touchEnd = useCallback(
     (e: React.TouchEvent, key: keyof KeyState) => {
-      // e.preventDefault();
       unsetKey(key);
     },
     [unsetKey],
@@ -65,86 +237,19 @@ function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps) {
     };
   }, [keys, setKey, unsetKey]);
 
-  const dpadButtonClass =
-    'w-10 h-10 bg-gray-700 hover:bg-gray-600 active:bg-gray-500 border border-gray-500 rounded flex items-center justify-center text-white text-sm select-none transition-colors duration-75';
-  const dpadActiveButtonClass =
-    'w-10 h-10 bg-gray-500 border border-gray-400 rounded flex items-center justify-center text-white text-sm select-none';
-
   const shiftButtonClass =
     'w-17 h-15 bg-red-700 hover:bg-red-600 active:bg-red-500 border-2 border-red-500 rounded-lg flex flex-col items-center justify-center text-white text-sm select-none transition-colors duration-75 shadow-lg';
   const shiftActiveButtonClass =
     'w-17 h-15 bg-red-500 border-2 border-red-400 rounded-lg flex flex-col items-center justify-center text-white text-sm select-none shadow-lg';
 
-  const toggleDPadClass = (k: boolean) => {
-    return k ? dpadActiveButtonClass : dpadButtonClass;
-  };
-
   return (
     <>
+      {/* Analog Stick */}
       <div className="fixed bottom-7 left-12 lg:left-10 z-50">
-        <div className="flex flex-col items-center space-y-2">
-          {/* Top row - W button */}
-          <button
-            className={toggleDPadClass(keys.w)}
-            onMouseDown={() => setKey('w')}
-            onMouseUp={() => unsetKey('w')}
-            onTouchStart={(e) => touchStart(e, 'w')}
-            onTouchEnd={(e) => touchEnd(e, 'w')}
-            aria-label="Move Up (W)"
-          >
-            <div className="flex flex-col items-center">
-              <span>↑</span>
-              <span>W</span>
-            </div>
-          </button>
-
-          {/* Bottom row - A, S, D buttons */}
-          <div className="flex space-x-2">
-            <button
-              className={toggleDPadClass(keys.a)}
-              onMouseDown={() => setKey('a')}
-              onMouseUp={() => unsetKey('a')}
-              onTouchStart={(e) => touchStart(e, 'a')}
-              onTouchEnd={(e) => touchEnd(e, 'a')}
-              aria-label="Move Left (A)"
-            >
-              <div className="flex flex-col items-center">
-                <span>←</span>
-                <span>A</span>
-              </div>
-            </button>
-
-            <button
-              className={toggleDPadClass(keys.s)}
-              onMouseDown={() => setKey('s')}
-              onMouseUp={() => unsetKey('s')}
-              onTouchStart={(e) => touchStart(e, 's')}
-              onTouchEnd={(e) => touchEnd(e, 's')}
-              aria-label="Move Down (S)"
-            >
-              <div className="flex flex-col items-center">
-                <span>↓</span>
-                <span>S</span>
-              </div>
-            </button>
-
-            <button
-              className={toggleDPadClass(keys.d)}
-              onMouseDown={() => setKey('d')}
-              onMouseUp={() => unsetKey('d')}
-              onTouchStart={(e) => touchStart(e, 'd')}
-              onTouchEnd={(e) => touchEnd(e, 'd')}
-              aria-label="Move Right (D)"
-            >
-              <div className="flex flex-col items-center">
-                <span>→</span>
-                <span>D</span>
-              </div>
-            </button>
-          </div>
-        </div>
+        <AnalogStick onMove={handleAnalogMove} keys={keys} />
       </div>
 
+      {/* Shift Button */}
       <div className="fixed bottom-7 right-12 lg:right-10 z-50">
         <button
           className={keys.shift ? shiftActiveButtonClass : shiftButtonClass}
@@ -152,10 +257,11 @@ function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps) {
           onMouseUp={() => unsetKey('shift')}
           onTouchStart={(e) => touchStart(e, 'shift')}
           onTouchEnd={(e) => touchEnd(e, 'shift')}
+          data-testid="shift-btn"
           aria-label={`${shiftLabel}`}
         >
           <div className="flex flex-col items-center">
-            <span>Shift to</span>
+            <span>Hold to</span>
             <span>{shiftLabel}</span>
           </div>
         </button>

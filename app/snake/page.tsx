@@ -271,7 +271,7 @@ export default function Snake() {
         text="Game Reset. Avoid boundaries!"
         textColor="text-red-700"
       />
-      
+
       <div
         id="stamina"
         className="absolute left-2.5 top-[40vh] sm:top-[32vh] w-6 sm:w-8 h-24 gap-1 flex flex-col-reverse border-2 border-solid border-white rounded-md"
