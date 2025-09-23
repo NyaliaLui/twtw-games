@@ -201,6 +201,7 @@ export default function ConditionalLayout({
               <Link
                 href="/"
                 className="w-full px-4 py-3 text-left text-white hover:bg-gray-700 transition-colors duration-200 flex items-center space-x-2"
+                scroll={false}
                 onClick={() => setIsDropdownOpen(false)}
               >
                 <svg
@@ -279,6 +280,7 @@ export default function ConditionalLayout({
           <Link
             href="/"
             className="flex items-center space-x-3 rtl:space-x-reverse"
+            scroll={false}
           >
             <Image
               src={LogoImage}
@@ -334,6 +336,7 @@ export default function ConditionalLayout({
                 <Link
                   href="/snake"
                   className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white transition-colors"
+                  scroll={false}
                   onClick={hideHamburger}
                 >
                   Snake
@@ -343,6 +346,7 @@ export default function ConditionalLayout({
                 <Link
                   href="/animation"
                   className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white transition-colors"
+                  scroll={false}
                   onClick={hideHamburger}
                 >
                   Animation Challenge
