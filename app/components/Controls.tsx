@@ -21,7 +21,7 @@ function AnalogStick({ onMove, keys }: AnalogStickProps) {
   const knobRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [knobPosition, setKnobPosition] = useState({ x: 0, y: 0 });
-  
+
   const stickRadius = 40; // Total stick area radius
   const knobRadius = 12; // Knob radius
   const deadZone = 0.1; // Dead zone threshold (0-1)
@@ -31,15 +31,18 @@ function AnalogStick({ onMove, keys }: AnalogStickProps) {
     updatePosition(clientX, clientY);
   }, []);
 
-  const handleMove = useCallback((clientX: number, clientY: number) => {
-    if (!isDragging) return;
-    updatePosition(clientX, clientY);
-  }, [isDragging]);
+  const handleMove = useCallback(
+    (clientX: number, clientY: number) => {
+      if (!isDragging) return;
+      updatePosition(clientX, clientY);
+    },
+    [isDragging],
+  );
 
   const handleEnd = useCallback(() => {
     setIsDragging(false);
     setKnobPosition({ x: 0, y: 0 });
-    
+
     // Reset all movement keys
     const newKeys = { ...keys };
     newKeys.w = false;
@@ -49,82 +52,103 @@ function AnalogStick({ onMove, keys }: AnalogStickProps) {
     onMove(newKeys);
   }, [keys, onMove]);
 
-  const updatePosition = useCallback((clientX: number, clientY: number) => {
-    if (!stickRef.current) return;
+  const updatePosition = useCallback(
+    (clientX: number, clientY: number) => {
+      if (!stickRef.current) return;
 
-    const stickRect = stickRef.current.getBoundingClientRect();
-    const stickCenterX = stickRect.left + stickRect.width / 2;
-    const stickCenterY = stickRect.top + stickRect.height / 2;
+      const stickRect = stickRef.current.getBoundingClientRect();
+      const stickCenterX = stickRect.left + stickRect.width / 2;
+      const stickCenterY = stickRect.top + stickRect.height / 2;
 
-    const deltaX = clientX - stickCenterX;
-    const deltaY = clientY - stickCenterY;
-    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+      const deltaX = clientX - stickCenterX;
+      const deltaY = clientY - stickCenterY;
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-    // Limit knob to stick boundary
-    const maxDistance = stickRadius - knobRadius;
-    const clampedDistance = Math.min(distance, maxDistance);
-    
-    let x = 0, y = 0;
-    if (distance > 0) {
-      x = (deltaX / distance) * clampedDistance;
-      y = (deltaY / distance) * clampedDistance;
-    }
+      // Limit knob to stick boundary
+      const maxDistance = stickRadius - knobRadius;
+      const clampedDistance = Math.min(distance, maxDistance);
 
-    setKnobPosition({ x, y });
+      let x = 0,
+        y = 0;
+      if (distance > 0) {
+        x = (deltaX / distance) * clampedDistance;
+        y = (deltaY / distance) * clampedDistance;
+      }
 
-    // Convert to key states
-    const normalizedX = x / maxDistance;
-    const normalizedY = y / maxDistance;
+      setKnobPosition({ x, y });
 
-    const newKeys = { ...keys };
-    newKeys.w = normalizedY < -deadZone;
-    newKeys.s = normalizedY > deadZone;
-    newKeys.a = normalizedX < -deadZone;
-    newKeys.d = normalizedX > deadZone;
+      // Convert to key states
+      const normalizedX = x / maxDistance;
+      const normalizedY = y / maxDistance;
 
-    onMove(newKeys);
-  }, [keys, onMove, stickRadius, knobRadius, deadZone]);
+      const newKeys = { ...keys };
+      newKeys.w = normalizedY < -deadZone;
+      newKeys.s = normalizedY > deadZone;
+      newKeys.a = normalizedX < -deadZone;
+      newKeys.d = normalizedX > deadZone;
+
+      onMove(newKeys);
+    },
+    [keys, onMove, stickRadius, knobRadius, deadZone],
+  );
 
   // Mouse events
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    handleStart(e.clientX, e.clientY);
-  }, [handleStart]);
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      handleStart(e.clientX, e.clientY);
+    },
+    [handleStart],
+  );
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    handleMove(e.clientX, e.clientY);
-  }, [handleMove]);
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      handleMove(e.clientX, e.clientY);
+    },
+    [handleMove],
+  );
 
   const handleMouseUp = useCallback(() => {
     handleEnd();
   }, [handleEnd]);
 
   // Touch events
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    handleStart(touch.clientX, touch.clientY);
-  }, [handleStart]);
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      handleStart(touch.clientX, touch.clientY);
+    },
+    [handleStart],
+  );
 
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    e.preventDefault();
-    const touch = e.touches[0];
-    handleMove(touch.clientX, touch.clientY);
-  }, [handleMove]);
+  const handleTouchMove = useCallback(
+    (e: TouchEvent) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      handleMove(touch.clientX, touch.clientY);
+    },
+    [handleMove],
+  );
 
-  const handleTouchEnd = useCallback((e: TouchEvent) => {
-    e.preventDefault();
-    handleEnd();
-  }, [handleEnd]);
+  const handleTouchEnd = useCallback(
+    (e: TouchEvent) => {
+      e.preventDefault();
+      handleEnd();
+    },
+    [handleEnd],
+  );
 
   // Event listeners
   useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
-      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchmove', handleTouchMove, {
+        passive: false,
+      });
       document.addEventListener('touchend', handleTouchEnd, { passive: false });
-      
+
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
@@ -132,7 +156,13 @@ function AnalogStick({ onMove, keys }: AnalogStickProps) {
         document.removeEventListener('touchend', handleTouchEnd);
       };
     }
-  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
+  }, [
+    isDragging,
+    handleMouseMove,
+    handleMouseUp,
+    handleTouchMove,
+    handleTouchEnd,
+  ]);
 
   return (
     <div
@@ -153,10 +183,10 @@ function AnalogStick({ onMove, keys }: AnalogStickProps) {
           className="absolute w-6 h-6 bg-gray-300 border-2 border-gray-400 rounded-full transition-all duration-75 shadow-lg"
           style={{
             transform: `translate(${knobPosition.x}px, ${knobPosition.y}px)`,
-            backgroundColor: isDragging ? '#e5e7eb' : '#d1d5db'
+            backgroundColor: isDragging ? '#e5e7eb' : '#d1d5db',
           }}
         />
-        
+
         {/* Center dot indicator */}
         {!isDragging && (
           <div className="absolute w-2 h-2 bg-gray-400 rounded-full opacity-50" />
@@ -192,7 +222,8 @@ function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps) {
       // Check for key changes and trigger appropriate handlers
       Object.keys(newKeys).forEach((keyName) => {
         const key = keyName as keyof KeyState;
-        if (key !== 'shift') { // Don't affect shift key
+        if (key !== 'shift') {
+          // Don't affect shift key
           if (newKeys[key] && !keys[key]) {
             keys[key] = true;
             onKeyDown(keys);
@@ -203,7 +234,7 @@ function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps) {
         }
       });
     },
-    [keys, onKeyDown, onKeyUp]
+    [keys, onKeyDown, onKeyUp],
   );
 
   const touchStart = useCallback(

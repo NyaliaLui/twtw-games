@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useCallback, useState, useEffect } from 'react';
 
 import LogoImage from '@/public/TWTWLogo.png';
-import { rootConfig } from '@/app/constants';
+import { rootConfig, getHelpContent } from '@/app/constants';
 
 export default function ConditionalLayout({
   children,
@@ -56,76 +56,7 @@ export default function ConditionalLayout({
     }
   }, [pathname]);
 
-  // Get help content based on current page
-  const getHelpContent = () => {
-    switch (pathname) {
-      case '/snake':
-        return {
-          title: 'How to play',
-          content: (
-            <div className="space-y-4">
-              <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-                <li>
-                  Eat red fruits to grow the snake and increase your score.
-                </li>
-                <li>
-                  You level up when you reach the max score and higher levels =
-                  faster base speed.
-                </li>
-                <li>Gain 1 stamina block for every 5 fruit you eat.</li>
-                <li>The vertical bar shows the amount of stamina.</li>
-                <li>
-                  Use the <strong>WASD</strong> buttons to move.
-                </li>
-                <li>
-                  Use the <strong>Shift</strong> or <strong>BOOST</strong>{' '}
-                  button to speed up (consumes stamina).
-                </li>
-                <li>Avoid hitting the boundaries or the game will reset!</li>
-              </ul>
-            </div>
-          ),
-        };
-      case '/animation':
-        return {
-          title: 'How to play',
-          content: (
-            <div className="space-y-4">
-              <div>
-                <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-                  <li>
-                    This project was an exercise on 3D animation, GLTF files,
-                    and creating worlds with textures.
-                  </li>
-                  <li>
-                    Watch the soldier's animations change between idle, walk,
-                    and run.
-                  </li>
-                  <li>
-                    Use the <strong>WASD</strong> buttons to move.
-                  </li>
-                  <li>
-                    Hold the <strong>Shift</strong> or <strong>RUN</strong>{' '}
-                    button to speed up.
-                  </li>
-                </ul>
-              </div>
-            </div>
-          ),
-        };
-      default:
-        return {
-          title: 'Help',
-          content: (
-            <p className="text-gray-700 dark:text-gray-300">
-              No help available for this page.
-            </p>
-          ),
-        };
-    }
-  };
-
-  const helpContent = getHelpContent();
+  const helpContent = getHelpContent(pathname);
 
   if (shouldHideLayout) {
     return (
