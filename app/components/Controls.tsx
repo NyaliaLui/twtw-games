@@ -26,32 +26,6 @@ function AnalogStick({ onMove, keys }: AnalogStickProps) {
   const knobRadius = 12; // Knob radius
   const deadZone = 0.1; // Dead zone threshold (0-1)
 
-  const handleStart = useCallback((clientX: number, clientY: number) => {
-    setIsDragging(true);
-    updatePosition(clientX, clientY);
-  }, []);
-
-  const handleMove = useCallback(
-    (clientX: number, clientY: number) => {
-      if (!isDragging) return;
-      updatePosition(clientX, clientY);
-    },
-    [isDragging],
-  );
-
-  const handleEnd = useCallback(() => {
-    setIsDragging(false);
-    setKnobPosition({ x: 0, y: 0 });
-
-    // Reset all movement keys
-    const newKeys = { ...keys };
-    newKeys.w = false;
-    newKeys.a = false;
-    newKeys.s = false;
-    newKeys.d = false;
-    onMove(newKeys);
-  }, [keys, onMove]);
-
   const updatePosition = useCallback(
     (clientX: number, clientY: number) => {
       if (!stickRef.current) return;
@@ -91,6 +65,35 @@ function AnalogStick({ onMove, keys }: AnalogStickProps) {
     },
     [keys, onMove, stickRadius, knobRadius, deadZone],
   );
+
+  const handleStart = useCallback(
+    (clientX: number, clientY: number) => {
+      setIsDragging(true);
+      updatePosition(clientX, clientY);
+    },
+    [updatePosition],
+  );
+
+  const handleMove = useCallback(
+    (clientX: number, clientY: number) => {
+      if (!isDragging) return;
+      updatePosition(clientX, clientY);
+    },
+    [isDragging, updatePosition],
+  );
+
+  const handleEnd = useCallback(() => {
+    setIsDragging(false);
+    setKnobPosition({ x: 0, y: 0 });
+
+    // Reset all movement keys
+    const newKeys = { ...keys };
+    newKeys.w = false;
+    newKeys.a = false;
+    newKeys.s = false;
+    newKeys.d = false;
+    onMove(newKeys);
+  }, [keys, onMove]);
 
   // Mouse events
   const handleMouseDown = useCallback(
@@ -269,19 +272,19 @@ function Controls({ keys, shiftLabel, onKeyDown, onKeyUp }: ControlsProps) {
   }, [keys, setKey, unsetKey]);
 
   const shiftButtonClass =
-    'w-17 h-15 bg-red-700 hover:bg-red-600 active:bg-red-500 border-2 border-red-500 rounded-lg flex flex-col items-center justify-center text-white text-sm select-none transition-colors duration-75 shadow-lg';
+    'w-20 h-18 bg-red-700 hover:bg-red-600 active:bg-red-500 border-2 border-red-500 rounded-lg flex flex-col items-center justify-center text-white text-lg select-none transition-colors duration-75 shadow-lg';
   const shiftActiveButtonClass =
-    'w-17 h-15 bg-red-500 border-2 border-red-400 rounded-lg flex flex-col items-center justify-center text-white text-sm select-none shadow-lg';
+    'w-20 h-18 bg-red-500 border-2 border-red-400 rounded-lg flex flex-col items-center justify-center text-white text-lg select-none shadow-lg';
 
   return (
     <>
       {/* Analog Stick */}
-      <div className="fixed bottom-7 left-12 lg:left-10 z-50">
+      <div className="fixed bottom-1/4 lg:bottom-1/3 left-25 lg:left-40 z-50">
         <AnalogStick onMove={handleAnalogMove} keys={keys} />
       </div>
 
       {/* Shift Button */}
-      <div className="fixed bottom-7 right-12 lg:right-10 z-50">
+      <div className="fixed bottom-1/4 lg:bottom-1/3 right-25 lg:right-40 z-50">
         <button
           className={keys.shift ? shiftActiveButtonClass : shiftButtonClass}
           onMouseDown={() => setKey('shift')}
