@@ -35,6 +35,7 @@ export default function Home() {
           href="/snake"
           className="w-full sm:w-64 inline-flex items-center justify-center px-6 py-3 text-base font-medium text-center text-white bg-green-700 rounded-lg hover:bg-green-600 focus:ring-4 focus:ring-green-300 dark:focus:ring-green-900 transition-colors duration-200"
           scroll={false}
+          data-testid="snake-btn"
         >
           <span className="mr-2">🐍</span>
           Snake
@@ -43,6 +44,7 @@ export default function Home() {
           href="/animation"
           className="w-full sm:w-64 inline-flex items-center justify-center px-6 py-3 text-base font-medium text-center text-white bg-purple-700 rounded-lg hover:bg-purple-600 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900 transition-colors duration-200"
           scroll={false}
+          data-testid="animation-btn"
         >
           <span className="mr-1">🏃‍♂️</span>
           Animation Challenge

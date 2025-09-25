@@ -6,6 +6,7 @@ import { useCallback, useState, useEffect } from 'react';
 
 import LogoImage from '@/public/TWTWLogo.png';
 import { rootConfig, getHelpContent } from '@/app/constants';
+import { OrientationModal } from '@/app/components/OrientationModal';
 
 export default function ConditionalLayout({
   children,
@@ -154,6 +155,8 @@ export default function ConditionalLayout({
             </div>
           )}
         </div>
+
+        <OrientationModal />
 
         {/* Help Modal */}
         {isHelpModalOpen && (
