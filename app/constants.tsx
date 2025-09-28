@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
 import { RootState } from '@react-three/fiber';
 
-export { rootConfig, snakeConfig, animationConfig };
+export { rootConfig, snakeConfig, animationConfig, getHelpContent };
 
 const rootConfig = {
   strokeWidth: 2,
@@ -86,6 +86,7 @@ const animationConfig = {
   orbitControls: {
     enableRotate: false,
     target: new Vector3(0, 1, 0),
+    enableZoom: false,
   },
   moveUnit: 1,
   groundDim: 100,
@@ -104,3 +105,72 @@ const animationConfig = {
   baseSpeed: 0.08,
   runMultiplier: (shift: boolean) => (shift ? 2.5 : 1),
 };
+
+// Get help content based on current page
+function getHelpContent(pathname: string) {
+  switch (pathname) {
+    case '/snake':
+      return {
+        title: 'How to play',
+        content: (
+          <div className="space-y-4">
+            <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
+              <li>Eat red fruits to grow the snake and increase your score.</li>
+              <li>
+                You level up when you reach the max score and higher levels =
+                faster base speed.
+              </li>
+              <li>Gain 1 stamina block for every 5 fruit you eat.</li>
+              <li>The vertical bar shows the amount of stamina.</li>
+              <li>
+                Use the <strong>analog stick</strong> or{' '}
+                <strong>WASD keys</strong> to move.
+              </li>
+              <li>
+                Hold the <strong>BOOST button</strong> or{' '}
+                <strong>Shift key</strong> to speed up (consumes stamina).
+              </li>
+              <li>Avoid hitting the boundaries or else the game will reset!</li>
+            </ul>
+          </div>
+        ),
+      };
+    case '/animation':
+      return {
+        title: 'How to play',
+        content: (
+          <div className="space-y-4">
+            <div>
+              <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
+                <li>
+                  This project was an exercise on 3D animation, GLTF files, and
+                  creating worlds with textures.
+                </li>
+                <li>
+                  Watch the soldier&apos;s animations change between idle, walk,
+                  and run.
+                </li>
+                <li>
+                  Use the <strong>analog stick</strong> or{' '}
+                  <strong>WASD keys</strong> to move.
+                </li>
+                <li>
+                  Hold the <strong>RUN button</strong> or{' '}
+                  <strong>Shift key</strong> to speed up.
+                </li>
+              </ul>
+            </div>
+          </div>
+        ),
+      };
+    default:
+      return {
+        title: 'Help',
+        content: (
+          <p className="text-gray-700 dark:text-gray-300">
+            No help available for this page.
+          </p>
+        ),
+      };
+  }
+}

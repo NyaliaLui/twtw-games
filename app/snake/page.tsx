@@ -15,6 +15,7 @@ import { isBoundaryHit, getCollectedFruitSet } from '@/app/utils';
 import { makeCubeProps } from '@/app/components/snake/Cube';
 import { snakeConfig } from '@/app/constants';
 import { useResponsiveGameSizes } from '@/app/hooks/useResponsiveGameSizes';
+import { Popup } from '@/app/components/snake/Popup';
 
 export default function Snake() {
   const { gameBoundarySize, gameHalfBoundarySize, cubeDim } =
@@ -37,6 +38,7 @@ export default function Snake() {
   const [maxScore, setMaxScore] = useState(snakeConfig.initMaxScore);
   const [level, setLevel] = useState(snakeConfig.initLevel);
   const [showLevelUp, setShowLevelUp] = useState(snakeConfig.initShowLevelUp);
+  const [showReset, setShowReset] = useState(snakeConfig.initShowLevelUp);
 
   const [baseSpeed, setBaseSpeed] = useState(snakeConfig.initSpeed);
   const [speed, setSpeed] = useState(snakeConfig.initSpeed);
@@ -65,7 +67,7 @@ export default function Snake() {
   }, [gameBoundarySize, gameHalfBoundarySize]);
 
   const spawnFruits = useCallback(
-    (count: number = fruitCount) => {
+    (count: number) => {
       // TOOD(@NyaliaLui): What happens if the snake collects two or more fruits in the same frame?
       //                  A: Currently, there is potential for fruits to spawn in the same location as the last one.
       //                 This appears in the game when it looks like collecting 1 fruit led to a double count in the score.
@@ -73,25 +75,22 @@ export default function Snake() {
       for (let i = 0; i < count; i++) arr.push(randPos());
       setFruits(arr);
     },
-    [randPos, fruitCount],
+    [randPos],
   );
 
-  const growSnake = useCallback(
-    (parts: number = snakeConfig.numPartsToGrow) => {
-      setBodyParts((prev) => {
-        const headPos = headRef.current
-          ? headRef.current.position.clone()
-          : new Vector3();
-        const newParts = new Array(parts).fill(0).map(() => headPos.clone());
-        return [...prev, ...newParts];
-      });
-    },
-    [],
-  );
+  const growSnake = useCallback((parts: number) => {
+    setBodyParts((prev) => {
+      const headPos = headRef.current
+        ? headRef.current.position.clone()
+        : new Vector3();
+      const newParts = new Array(parts).fill(0).map(() => headPos.clone());
+      return [...prev, ...newParts];
+    });
+  }, []);
 
   const resetSnake = useCallback(() => {
     setBodyParts(snakeConfig.initBodyParts);
-    growSnake();
+    growSnake(snakeConfig.numPartsToGrow);
     setScore(snakeConfig.initScore);
     setBaseSpeed(snakeConfig.initSpeed);
     setSpeed(snakeConfig.initSpeed);
@@ -105,7 +104,7 @@ export default function Snake() {
       clearInterval(staminaTimerRef.current);
       staminaTimerRef.current = snakeConfig.initStaminaTimer;
     }
-    spawnFruits(1);
+    spawnFruits(snakeConfig.initFruitCount);
   }, [growSnake, spawnFruits]);
 
   const startBoost = useCallback(() => {
@@ -172,6 +171,8 @@ export default function Snake() {
       if (boundCheck.isHit) {
         headRef.current.position.copy(boundCheck.pos);
         resetSnake();
+        setShowReset(true);
+        setTimeout(() => setShowReset(false), snakeConfig.levelUpTimeout);
         return;
       }
 
@@ -194,7 +195,7 @@ export default function Snake() {
 
       if (collectedFruitSet.size > 0) {
         setScore((s) => s + snakeConfig.incrementScore);
-        growSnake();
+        growSnake(snakeConfig.numPartsToGrow);
         setFruitCollectedCount(
           (fc) => fc + snakeConfig.incrementFruitCollected,
         );
@@ -211,7 +212,7 @@ export default function Snake() {
       }
 
       if (fruits.length === 0) {
-        spawnFruits();
+        spawnFruits(fruitCount);
       }
 
       if (score >= maxScore) {
@@ -224,7 +225,7 @@ export default function Snake() {
           // This is tracked at https://github.com/NyaliaLui/twtw-games/issues/28.
           spawnFruits(fruitCount + snakeConfig.incrementFruitCount);
         } else {
-          spawnFruits();
+          spawnFruits(fruitCount);
         }
 
         setLevel((l) => l + snakeConfig.incrementLevel);
@@ -253,16 +254,21 @@ export default function Snake() {
         <div id="max-score">Max: {maxScore}</div>
         <div id="score">Score: {score}</div>
       </div>
-      <div
-        id="level-up"
-        className="absolute top-1/2 left-1/2 text-white font-mono text-2xl sm:text-5xl"
-        style={{
-          opacity: showLevelUp ? 1 : 0,
-          transform: 'translate(-50%, -80%)',
-        }}
-      >
-        Level: {level}
-      </div>
+
+      <Popup
+        name="level-up"
+        isOpaque={showLevelUp}
+        text={`Level: ${level}`}
+        textColor="text-white"
+      />
+
+      <Popup
+        name="reset-win"
+        isOpaque={showReset}
+        text="Game Reset. Avoid boundaries!"
+        textColor="text-red-700"
+      />
+
       <div
         id="stamina"
         className="absolute left-2.5 top-[40vh] sm:top-[32vh] w-6 sm:w-8 h-24 gap-1 flex flex-col-reverse border-2 border-solid border-white rounded-md"
